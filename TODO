@@ -1,0 +1,15 @@
+optional_depends:
+what is "trees", how is it used? -- "realtest"
+intllib: make sure to replace w/ minetest builtin stuff
+homedecor: is this really a dependancy? is there even an individual mod called homedecor?
+
+https://github.com/Sokomine/cottages/compare/master...BlockySurvival:master
+https://gitea.your-land.de/your-land/cottages/commits/branch/yl_stable
+
+
+cottages.switch_public needs to check that the form comes from the right mod O_o
+
+
+* listrings
+* HUD updates
+* chat_send_player, and automatic limits
