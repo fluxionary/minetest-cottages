@@ -1,15 +1,19 @@
-minetest.register_craft({
-    output = "cottages:anvil",
-    recipe = {
-        {cottages.craftitem.steel, cottages.craftitem.steel, cottages.craftitem.steel},
-        {"", cottages.craftitem.steel, ""},
-        {cottages.craftitem.steel, cottages.craftitem.steel, cottages.craftitem.steel}},
-})
+local ci = cottages.craftitem
 
-minetest.register_craft({
-    output = "cottages:hammer",
-    recipe = {
-        {cottages.craftitem.steel},
-        {"cottages:anvil"},
-        {cottages.craftitem.stick}}
-})
+if ci.steel then
+    minetest.register_craft({
+        output = "cottages:anvil",
+        recipe = {
+            {ci.steel, ci.steel, ci.steel},
+            {"", ci.steel, ""},
+            {ci.steel, ci.steel, ci.steel}},
+    })
+
+    minetest.register_craft({
+        output = "cottages:hammer",
+        recipe = {
+            {ci.steel},
+            {"cottages:anvil"},
+            {ci.stick}}
+    })
+end

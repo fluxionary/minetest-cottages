@@ -1,4 +1,3 @@
-
 -- open shutters in the morning
 minetest.register_abm({
     nodenames = {"cottages:window_shutter_closed"},

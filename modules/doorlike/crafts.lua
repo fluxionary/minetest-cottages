@@ -1,6 +1,4 @@
------------------------------------------------------------------------------------------------------------
--- and now the crafting receipes:
------------------------------------------------------------------------------------------------------------
+local ci = cottages.craftitem
 
 -- transform opend and closed shutters into each other for convenience
 minetest.register_craft({
@@ -17,12 +15,14 @@ minetest.register_craft({
     }
 })
 
-minetest.register_craft({
-    output = "cottages:window_shutter_open",
-    recipe = {
-        {cottages.craftitem.wood, "", cottages.craftitem.wood},
-    }
-})
+if ci.wood then
+    minetest.register_craft({
+        output = "cottages:window_shutter_open",
+        recipe = {
+            {ci.wood, "", ci.wood},
+        }
+    })
+end
 
 -- transform one half door into another
 minetest.register_craft({
@@ -39,13 +39,15 @@ minetest.register_craft({
     }
 })
 
-minetest.register_craft({
-    output = "cottages:half_door 2",
-    recipe = {
-        {"", cottages.craftitem.wood, ""},
-        {"", cottages.craftitem.door, ""},
-    }
-})
+if ci.wood and ci.door then
+    minetest.register_craft({
+        output = "cottages:half_door 2",
+        recipe = {
+            {"", ci.wood, ""},
+            {"", ci.door, ""},
+        }
+    })
+end
 
 -- transform open and closed versions into into another for convenience
 minetest.register_craft({
@@ -62,9 +64,11 @@ minetest.register_craft({
     }
 })
 
-minetest.register_craft({
-    output = "cottages:gate_closed",
-    recipe = {
-        {cottages.craftitem.stick, cottages.craftitem.stick, cottages.craftitem.wood},
-    }
-})
+if ci.stick and ci.wood then
+    minetest.register_craft({
+        output = "cottages:gate_closed",
+        recipe = {
+            {ci.stick, ci.stick, ci.wood},
+        }
+    })
+end

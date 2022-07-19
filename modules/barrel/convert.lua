@@ -9,7 +9,7 @@ minetest.register_lbm({
     label = "Convert lying barrels",
     name = "cottages:convert_lying_barrels",
     nodenames = {"cottages:barrel_lying", "cottages:barrel_lying_open"},
-    run_at_every_load = true,  -- false is unreliable
+    run_at_every_load = true, -- false is unreliable
     action = function(pos, node)
         node.name = string.gsub(node.name, "_lying", "")
         node.param2 = rotations[node.param2 + 1] or 0

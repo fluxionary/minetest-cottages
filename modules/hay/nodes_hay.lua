@@ -1,28 +1,25 @@
--- contains hay_mat, hay and hay bale
--- (gives the pitchfork some work)
---
 local S = cottages.S
 
 -- If default:dirt_with_grass is digged while wielding a pitchfork, it will
 -- turn into dirt and get some hay placed above it.
 -- The hay will disappear (decay) after a couple of minutes.
 if (minetest.registered_items["default:dirt_with_grass"]
-    and minetest.registered_tools["cottages:pitchfork"]) then
+        and minetest.registered_tools["cottages:pitchfork"]) then
     minetest.override_item("default:dirt_with_grass", {
         after_dig_node = function(pos, oldnode, oldmetadata, digger)
-            if (not (pos) or not (digger)) then
+            if not (pos) or not (digger) then
                 return
             end
             local wielded = digger:get_wielded_item()
             if (not (wielded)
-                or not (wielded:get_name())
-                or (wielded:get_name() ~= "cottages:pitchfork")) then
+                    or not (wielded:get_name())
+                    or (wielded:get_name() ~= "cottages:pitchfork")) then
                 return
             end
 
             local pos_above = {x = pos.x, y = pos.y + 1, z = pos.z}
             local node_above = minetest.get_node_or_nil(pos_above)
-            if (not (node_above) or not (node_above.name) or node_above.name ~= "air") then
+            if not (node_above) or not (node_above.name) or node_above.name ~= "air" then
                 return nil
             end
             minetest.swap_node(pos, {name = "default:dirt"})
@@ -63,7 +60,7 @@ minetest.register_node("cottages:hay_mat", {
     end,
     on_timer = function(pos, elapsed)
         local node = minetest.get_node(pos)
-        if (node and node.name == "cottages:hay_mat") then
+        if node and node.name == "cottages:hay_mat" then
             minetest.remove_node(pos)
             minetest.check_for_falling(pos)
         end

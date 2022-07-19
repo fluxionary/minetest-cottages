@@ -1,12 +1,9 @@
 local S = cottages.S
 
--- fast tool for digging nodes with the group "hay"
--- can also be placed as a node
-
 -- the straw node from default and similar nodes can be digged with the pitchfork as well
 local add_hay_group = {"farming:straw", "dryplants:reed", "darkage:straw_bale"}
 for i, v in ipairs(add_hay_group) do
-    if (minetest.registered_items[v]) then
+    if minetest.registered_items[v] then
         new_groups = minetest.registered_items[v].groups
         new_groups.hay = 3
         minetest.override_item(v, {groups = new_groups})
@@ -38,12 +35,12 @@ minetest.register_tool("cottages:pitchfork", {
     sound = {breaks = "default_tool_breaks"},
     -- place the pitchfork somewhere
     on_place = function(itemstack, placer, pointed_thing)
-        if (placer == nil or pointed_thing == nil or pointed_thing.type ~= "node") then
+        if placer == nil or pointed_thing == nil or pointed_thing.type ~= "node" then
             return nil
         end
         local pos = minetest.get_pointed_thing_position(pointed_thing, 1)
         local node = minetest.get_node_or_nil(pos)
-        if (node == nil or not (node.name) or node.name ~= "air") then
+        if node == nil or not (node.name) or node.name ~= "air" then
             return nil
         end
         if minetest.is_protected(pos, placer:get_player_name()) then
@@ -52,7 +49,7 @@ minetest.register_tool("cottages:pitchfork", {
         minetest.rotate_and_place(ItemStack("cottages:pitchfork_placed"), placer, pointed_thing)
         -- did the placing succeed?
         local nnode = minetest.get_node(pos)
-        if (not (nnode) or not (nnode.name) or nnode.name ~= "cottages:pitchfork_placed") then
+        if not (nnode) or not (nnode.name) or nnode.name ~= "cottages:pitchfork_placed" then
             return nil
         end
         local meta = minetest.get_meta(pos)
@@ -93,7 +90,7 @@ minetest.register_node("cottages:pitchfork_placed", {
     drop = "cottages:pitchfork",
     -- perserve wear
     preserve_metadata = function(pos, oldnode, oldmeta, drops)
-        if (oldmeta["wear"]) then
+        if oldmeta["wear"] then
             -- the first drop is the pitchfork
             drops[1]:set_wear(oldmeta["wear"])
         end
@@ -104,10 +101,10 @@ minetest.register_node("cottages:pitchfork_placed", {
 -- craft recipes
 --
 minetest.register_craft({
-    output = 'cottages:pitchfork',
+    output = "cottages:pitchfork",
     recipe = {
-        {'default:stick', 'default:stick', 'default:stick'},
-        {'', 'default:stick', ''},
-        {'', 'default:stick', ''},
+        {"default:stick", "default:stick", "default:stick"},
+        {"", "default:stick", ""},
+        {"", "default:stick", ""},
     }
 })

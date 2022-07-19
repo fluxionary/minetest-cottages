@@ -1,4 +1,3 @@
-
 local S = cottages.S
 
 -----------------------------------------------------------------------------------------------------------
@@ -89,19 +88,19 @@ minetest.register_node("cottages:half_door", {
         local node2 = minetest.get_node({x = pos.x, y = (pos.y + 1), z = pos.z})
 
         local param2 = node.param2
-        if (param2 % 4 == 1) then
+        if param2 % 4 == 1 then
             param2 = param2 + 1; --2
-        elseif (param2 % 4 == 2) then
+        elseif param2 % 4 == 2 then
             param2 = param2 - 1; --1
-        elseif (param2 % 4 == 3) then
+        elseif param2 % 4 == 3 then
             param2 = param2 - 3; --0
-        elseif (param2 % 4 == 0) then
+        elseif param2 % 4 == 0 then
             param2 = param2 + 3; --3
         end
         minetest.swap_node(pos, {name = "cottages:half_door", param2 = param2})
         -- if the node above consists of a door of the same type, open it as well
         -- Note: doors beneath this one are not opened! It is a special feature of these doors that they can be opend partly
-        if (node2 ~= nil and node2.name == node.name and node2.param2 == node.param2) then
+        if node2 ~= nil and node2.name == node.name and node2.param2 == node.param2 then
             minetest.swap_node({x = pos.x, y = (pos.y + 1), z = pos.z}, {name = "cottages:half_door", param2 = param2})
         end
     end,
@@ -132,18 +131,18 @@ minetest.register_node("cottages:half_door_inverted", {
         local node2 = minetest.get_node({x = pos.x, y = (pos.y + 1), z = pos.z})
 
         local param2 = node.param2
-        if (param2 % 4 == 1) then
+        if param2 % 4 == 1 then
             param2 = param2 - 1; --0
-        elseif (param2 % 4 == 0) then
+        elseif param2 % 4 == 0 then
             param2 = param2 + 1; --1
-        elseif (param2 % 4 == 2) then
+        elseif param2 % 4 == 2 then
             param2 = param2 + 1; --3
-        elseif (param2 % 4 == 3) then
+        elseif param2 % 4 == 3 then
             param2 = param2 - 1; --2
         end
         minetest.swap_node(pos, {name = "cottages:half_door_inverted", param2 = param2})
         -- open upper parts of this door (if there are any)
-        if (node2 ~= nil and node2.name == node.name and node2.param2 == node.param2) then
+        if node2 ~= nil and node2.name == node.name and node2.param2 == node.param2 then
             minetest.swap_node({x = pos.x, y = (pos.y + 1), z = pos.z}, {name = "cottages:half_door_inverted", param2 = param2})
         end
     end,
@@ -220,26 +219,26 @@ minetest.register_node("cottages:gate_open", {
 
 -- further alternate hatch materials: wood, tree, copper_block
 cottages.doorlike.register_hatch(
-    "cottages:hatch_wood",
-    "wooden hatch",
-    "cottages_minimal_wood.png",
-    cottages.craftitem.slab_wood,
-    {
-        groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
-        sounds = cottages.sounds.wood,
-    }
+        "cottages:hatch_wood",
+        "wooden hatch",
+        "cottages_minimal_wood.png",
+        cottages.craftitem.slab_wood,
+        {
+            groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+            sounds = cottages.sounds.wood,
+        }
 )
 cottages.doorlike.register_hatch(
-    "cottages:hatch_steel",
-    "metal hatch",
-    "cottages_steel_block.png",
-    cottages.craftitem.steel,
-    {
-        groups = {node = 1, cracky = 1, level = 2},
-        sounds = cottages.sounds.metal,
-        sound_open = "doors_steel_door_open",
-        sound_close = "doors_steel_door_close",
-        protected = true,
-    }
+        "cottages:hatch_steel",
+        "metal hatch",
+        "cottages_steel_block.png",
+        cottages.craftitem.steel,
+        {
+            groups = {node = 1, cracky = 1, level = 2},
+            sounds = cottages.sounds.metal,
+            sound_open = "doors_steel_door_open",
+            sound_close = "doors_steel_door_close",
+            protected = true,
+        }
 )
 

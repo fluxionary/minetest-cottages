@@ -1,4 +1,3 @@
-
 local S = cottages.S
 
 minetest.register_node("cottages:barrel", {

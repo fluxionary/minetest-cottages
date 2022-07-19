@@ -1,14 +1,16 @@
+local ci = cottages.craftitem
 
-
-minetest.register_craft({
-    output = "cottages:fence_small 3",
-    recipe = {
-        {cottages.craftitem_fence, cottages.craftitem_fence},
-    }
-})
+if ci.fence then
+    minetest.register_craft({
+        output = "cottages:fence_small 3",
+        recipe = {
+            {ci.fence, ci.fence},
+        }
+    })
+end
 
 -- xfences can be configured to replace normal fences - which makes them uncraftable
-if (minetest.get_modpath("xfences") ~= nil) then
+if minetest.get_modpath("xfences") then
     minetest.register_craft({
         output = "cottages:fence_small 3",
         recipe = {

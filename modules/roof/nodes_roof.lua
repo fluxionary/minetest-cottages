@@ -1,10 +1,4 @@
--- Boilerplate to support localized strings if intllib mod is installed.
 local S = cottages.S
-
----------------------------------------------------------------------------------------
--- roof parts
----------------------------------------------------------------------------------------
--- a better roof than the normal stairs; can be replaced by stairs:stair_wood
 
 
 -- create the three basic roof parts plus receipes for them
@@ -36,7 +30,7 @@ cottages.register_roof = function(name, tiles, basic_material, homedecor_alterna
     })
 
     -- a better roof than the normal stairs; this one is for usage directly on top of walls (it has the form of a stair)
-    if (name ~= "straw" or not (minetest.registered_nodes["stairs:stair_straw"]) or not (cottages.use_farming_straw_stairs)) then
+    if name ~= "straw" or not (minetest.registered_nodes["stairs:stair_straw"]) or not (cottages.use_farming_straw_stairs) then
         minetest.register_node("cottages:roof_connector_" .. name, {
             description = S("Roof connector " .. name),
             drawtype = "nodebox",
@@ -66,7 +60,7 @@ cottages.register_roof = function(name, tiles, basic_material, homedecor_alterna
     end
 
     -- this one is the slab version of the above roof
-    if (name ~= "straw" or not (minetest.registered_nodes["stairs:slab_straw"]) or not (cottages.use_farming_straw_stairs)) then
+    if name ~= "straw" or not (minetest.registered_nodes["stairs:slab_straw"]) or not (cottages.use_farming_straw_stairs) then
         minetest.register_node("cottages:roof_flat_" .. name, {
             description = S("Roof (flat) " .. name),
             drawtype = "nodebox",
@@ -95,28 +89,28 @@ cottages.register_roof = function(name, tiles, basic_material, homedecor_alterna
     end
 
     if (not (homedecor_alternative)
-        or (minetest.get_modpath("homedecor") ~= nil)) then
+            or (minetest.get_modpath("homedecor") ~= nil)) then
 
         minetest.register_craft({
             output = "cottages:roof_" .. name .. " 6",
             recipe = {
-                {'', '', basic_material},
-                {'', basic_material, ''},
-                {basic_material, '', ''}
+                {"", "", basic_material},
+                {"", basic_material, ""},
+                {basic_material, "", ""}
             }
         })
     end
 
     -- make those roof parts that use homedecor craftable without that mod
-    if (homedecor_alternative) then
-        basic_material = 'cottages:roof_wood'
+    if homedecor_alternative then
+        basic_material = "cottages:roof_wood"
 
         minetest.register_craft({
             output = "cottages:roof_" .. name .. " 3",
             recipe = {
-                {homedecor_alternative, '', basic_material},
-                {'', basic_material, ''},
-                {basic_material, '', ''}
+                {homedecor_alternative, "", basic_material},
+                {"", basic_material, ""},
+                {basic_material, "", ""}
             }
         })
     end
@@ -124,15 +118,15 @@ cottages.register_roof = function(name, tiles, basic_material, homedecor_alterna
     minetest.register_craft({
         output = "cottages:roof_connector_" .. name,
         recipe = {
-            {'cottages:roof_' .. name},
-            {cottages.craftitem_wood},
+            {"cottages:roof_" .. name},
+            {ci.wood},
         }
     })
 
     minetest.register_craft({
-        output = "cottages:roof_flat_" .. name .. ' 2',
+        output = "cottages:roof_flat_" .. name .. " 2",
         recipe = {
-            {'cottages:roof_' .. name, 'cottages:roof_' .. name},
+            {"cottages:roof_" .. name, "cottages:roof_" .. name},
         }
     })
 
@@ -152,41 +146,41 @@ end -- of cottages.register_roof( name, tiles, basic_material )
 ---------------------------------------------------------------------------------------
 -- add the diffrent roof types
 ---------------------------------------------------------------------------------------
-cottages.register_roof('straw',
-    {cottages.straw_texture, cottages.straw_texture,
-     cottages.straw_texture, cottages.straw_texture,
-     cottages.straw_texture, cottages.straw_texture},
-    'cottages:straw_mat', nil)
-cottages.register_roof('reet',
-    {"cottages_reet.png", "cottages_reet.png",
-     "cottages_reet.png", "cottages_reet.png",
-     "cottages_reet.png", "cottages_reet.png"},
-    cottages.craftitem_papyrus, nil)
-cottages.register_roof('wood',
-    {cottages.textures_roof_wood, cottages.texture_roof_sides,
-     cottages.texture_roof_sides, cottages.texture_roof_sides,
-     cottages.texture_roof_sides, cottages.textures_roof_wood},
-    cottages.craftitem_wood, nil)
-cottages.register_roof('black',
-    {"cottages_homedecor_shingles_asphalt.png", cottages.texture_roof_sides,
-     cottages.texture_roof_sides, cottages.texture_roof_sides,
-     cottages.texture_roof_sides, "cottages_homedecor_shingles_asphalt.png"},
-    'homedecor:shingles_asphalt', cottages.craftitem_coal_lump)
-cottages.register_roof('red',
-    {"cottages_homedecor_shingles_terracotta.png", cottages.texture_roof_sides,
-     cottages.texture_roof_sides, cottages.texture_roof_sides,
-     cottages.texture_roof_sides, "cottages_homedecor_shingles_terracotta.png"},
-    'homedecor:shingles_terracotta', cottages.craftitem_clay_brick)
-cottages.register_roof('brown',
-    {"cottages_homedecor_shingles_wood.png", cottages.texture_roof_sides,
-     cottages.texture_roof_sides, cottages.texture_roof_sides,
-     cottages.texture_roof_sides, "cottages_homedecor_shingles_wood.png"},
-    'homedecor:shingles_wood', cottages.craftitem_dirt)
-cottages.register_roof('slate',
-    {"cottages_slate.png", cottages.texture_roof_sides,
-     "cottages_slate.png", "cottages_slate.png",
-     cottages.texture_roof_sides, "cottages_slate.png"},
-    cottages.craftitem_stone, nil)
+cottages.register_roof("straw",
+        {cottages.straw_texture, cottages.straw_texture,
+         cottages.straw_texture, cottages.straw_texture,
+         cottages.straw_texture, cottages.straw_texture},
+        "cottages:straw_mat", nil)
+cottages.register_roof("reet",
+        {"cottages_reet.png", "cottages_reet.png",
+         "cottages_reet.png", "cottages_reet.png",
+         "cottages_reet.png", "cottages_reet.png"},
+        ci.papyrus, nil)
+cottages.register_roof("wood",
+        {cottages.textures_roof_wood, cottages.texture_roof_sides,
+         cottages.texture_roof_sides, cottages.texture_roof_sides,
+         cottages.texture_roof_sides, cottages.textures_roof_wood},
+        ci.wood, nil)
+cottages.register_roof("black",
+        {"cottages_homedecor_shingles_asphalt.png", cottages.texture_roof_sides,
+         cottages.texture_roof_sides, cottages.texture_roof_sides,
+         cottages.texture_roof_sides, "cottages_homedecor_shingles_asphalt.png"},
+        "homedecor:shingles_asphalt", ci.coal_lump)
+cottages.register_roof("red",
+        {"cottages_homedecor_shingles_terracotta.png", cottages.texture_roof_sides,
+         cottages.texture_roof_sides, cottages.texture_roof_sides,
+         cottages.texture_roof_sides, "cottages_homedecor_shingles_terracotta.png"},
+        "homedecor:shingles_terracotta", ci.clay_brick)
+cottages.register_roof("brown",
+        {"cottages_homedecor_shingles_wood.png", cottages.texture_roof_sides,
+         cottages.texture_roof_sides, cottages.texture_roof_sides,
+         cottages.texture_roof_sides, "cottages_homedecor_shingles_wood.png"},
+        "homedecor:shingles_wood", ci.dirt)
+cottages.register_roof("slate",
+        {"cottages_slate.png", cottages.texture_roof_sides,
+         "cottages_slate.png", "cottages_slate.png",
+         cottages.texture_roof_sides, "cottages_slate.png"},
+        ci.stone, nil)
 
 
 ---------------------------------------------------------------------------------------
@@ -203,7 +197,7 @@ minetest.register_node("cottages:slate_vertical", {
 
 minetest.register_craft({
     output = "cottages:slate_vertical",
-    recipe = {{cottages.craftitem_stone, cottages.craftitem_wood, ''}
+    recipe = {{ci.stone, ci.wood, ""}
     }
 })
 
@@ -220,7 +214,7 @@ minetest.register_node("cottages:reet", {
 
 minetest.register_craft({
     output = "cottages:reet",
-    recipe = {{cottages.craftitem_papyrus, cottages.craftitem_papyrus},
-              {cottages.craftitem_papyrus, cottages.craftitem_papyrus},
+    recipe = {{ci.papyrus, ci.papyrus},
+              {ci.papyrus, ci.papyrus},
     },
 })

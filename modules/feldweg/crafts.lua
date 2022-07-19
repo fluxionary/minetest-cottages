@@ -1,5 +1,3 @@
-
-
 minetest.register_craft({
     output = "cottages:feldweg_crossing 5",
     recipe = {

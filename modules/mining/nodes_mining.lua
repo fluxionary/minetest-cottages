@@ -1,6 +1,3 @@
----------------------------------------------------------------------------------------
--- a rope that is of use to the mines
----------------------------------------------------------------------------------------
 -- the rope can only be digged if there is no further rope above it
 -- Note: This rope also counts as a rail node; thus, carts can move through it
 minetest.register_node("cottages:rope", {
@@ -15,10 +12,10 @@ minetest.register_node("cottages:rope", {
     is_ground_content = false,
     can_dig = function(pos, player)
         local below = minetest.get_node({x = pos.x, y = pos.y - 1, z = pos.z})
-        if (below and below.name and below.name == "cottages:rope") then
-            if (player) then
+        if below and below.name and below.name == "cottages:rope" then
+            if player then
                 minetest.chat_send_player(player:get_player_name(),
-                    'The entire rope would be too heavy. Start digging at its lowest end!')
+                        "The entire rope would be too heavy. Start digging at its lowest end!")
             end
             return false
         end

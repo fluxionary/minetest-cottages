@@ -1,203 +1,232 @@
+local S = cottages.S
 
----------------------------------------------------------------------------------------
--- functions for sitting or sleeping
----------------------------------------------------------------------------------------
+local max_velo = 0.0001
 
-cottages.furniture.allow_sit = function(player)
+local attached_to = {}
+
+function cottages.furniture.allow_sit(player)
     -- no check possible
-    if (not (player.get_player_velocity)) then
-        return true
-    end
-    local velo = player:get_player_velocity()
-    if (not (velo)) then
+    if not minetest.is_player(player) then
         return false
     end
-    local max_velo = 0.0001
-    if (math.abs(velo.x) < max_velo
-        and math.abs(velo.y) < max_velo
-        and math.abs(velo.z) < max_velo) then
-        return true
+
+    local velo = player:get_player_velocity()
+    if not velo then
+        return false
     end
-    return false
+
+    return vector.length(velo) < max_velo
 end
 
-cottages.furniture.sit_on_bench = function(pos, node, clicker, itemstack, pointed_thing)
-    if (not (clicker) or not (default.player_get_animation) or not (cottages.allow_sit(clicker))) then
+function cottages.furniture.get_up(pos, player)
+    local player_name = player:get_player_name()
+
+    if cottages.has.player_monoids then
+        player_monoids.speed:del_change(player, "cottages:furniture")
+        player_monoids.jump:del_change(player, "cottages:furniture")
+        player_monoids.gravity:del_change(player, "cottages:furniture")
+
+    else
+        player:set_physics_override(1, 1, 1)
+    end
+
+    player_api.player_attached[player_name] = nil
+    player_api.set_animation(player, "stand")
+
+    player:set_pos({x = pos.x, y = pos.y - 0.5, z = pos.z})
+    player:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
+end
+
+function cottages.furniture.stop_moving(player)
+    if cottages.has.player_monoids then
+        player_monoids.speed:add_change(player, 0, "cottages:furniture")
+        player_monoids.jump:add_change(player, 0, "cottages:furniture")
+        player_monoids.gravity:add_change(player, 0, "cottages:furniture")
+
+    else
+        player:set_physics_override(0, 0, 0)
+    end
+end
+
+function cottages.furniture.sit_on_bench(pos, node, player)
+    if not (cottages.has.player_api and cottages.furniture.allow_sit(player)) then
         return
     end
 
-    local animation = default.player_get_animation(clicker)
-    local pname = clicker:get_player_name()
+    local animation = player_api.get_animation(player)
+    local player_name = player:get_player_name()
 
-    if (animation and animation.animation == "sit") then
-        default.player_attached[pname] = false
-        clicker:set_pos({x = pos.x, y = pos.y - 0.5, z = pos.z})
-        clicker:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-        clicker:set_physics_override(1, 1, 1)
-        default.player_set_animation(clicker, "stand", 30)
+    if animation.animation == "sit" then
+        cottages.furniture.get_up(pos, player)
+
     else
         -- the bench is not centered; prevent the player from sitting on air
-        local p2 = {x = pos.x, y = pos.y, z = pos.z}
+        local player_pos = {x = pos.x, y = pos.y, z = pos.z}
         if not (node) or node.param2 == 0 then
-            p2.z = p2.z + 0.3
+            player_pos.z = player_pos.z + 0.3
         elseif node.param2 == 1 then
-            p2.x = p2.x + 0.3
+            player_pos.x = player_pos.x + 0.3
         elseif node.param2 == 2 then
-            p2.z = p2.z - 0.3
+            player_pos.z = player_pos.z - 0.3
         elseif node.param2 == 3 then
-            p2.x = p2.x - 0.3
+            player_pos.x = player_pos.x - 0.3
         end
 
-        clicker:set_eye_offset({x = 0, y = -7, z = 2}, {x = 0, y = 0, z = 0})
-        clicker:set_pos(p2)
-        default.player_set_animation(clicker, "sit", 30)
-        clicker:set_physics_override(0, 0, 0)
-        default.player_attached[pname] = true
+        cottages.furniture.stop_moving(player)
+
+        player_api.set_animation(player, "sit")
+        player_api.player_attached[player_name] = true
+
+        player:set_eye_offset({x = 0, y = -7, z = 2}, {x = 0, y = 0, z = 0})
+        player:set_pos(player_pos)
     end
 end
 
-cottages.furniture.sleep_in_bed = function(pos, node, clicker, itemstack, pointed_thing)
-    if (not (clicker) or not (node) or not (node.name) or not (pos) or not (cottages.allow_sit(clicker))) then
+function cottages.furniture.is_head(node_name)
+    return node_name == "cottages:bed_head" or node_name == "cottages:sleeping_mat_head"
+end
+
+function cottages.furniture.is_bed(node_name)
+    return node_name == "cottages:bed_head" or node_name == "cottages:bed_foot"
+end
+
+function cottages.furniture.is_mat(node_name)
+    return node_name == "cottages:sleeping_mat_head" or node_name == "cottages:sleeping_mat"
+end
+
+function cottages.furniture.is_head_of(foot_name, head_name)
+    if foot_name == "cottages:bed_foot" then
+        return head_name == "cottages:bed_head"
+    elseif foot_name == "cottages:sleeping_mat" then
+        return head_name == "cottages:sleeping_mat_head"
+    end
+end
+
+function cottages.furniture.is_foot_of(head_name, foot_name)
+    if head_name == "cottages:bed_head" then
+        return foot_name == "cottages:bed_foot"
+    elseif head_name == "cottages:sleeping_mat_head" then
+        return foot_name == "cottages:sleeping_mat"
+    end
+end
+
+function cottages.furniture.is_valid_bed(pos, node)
+    local head_pos = vector.copy(pos)
+    local foot_pos = vector.copy(pos)
+
+    if cottages.furniture.is_head(node.name) then
+        if node.param2 == 0 then
+            foot_pos.z = foot_pos.z - 1
+        elseif node.param2 == 1 then
+            foot_pos.x = foot_pos.x - 1
+        elseif node.param2 == 2 then
+            foot_pos.z = foot_pos.z + 1
+        elseif node.param2 == 3 then
+            foot_pos.x = foot_pos.x + 1
+        end
+
+        local foot_node = minetest.get_node(foot_pos)
+
+        if cottages.furniture.is_foot_of(node.name, foot_node.name) and node.param2 == foot_node.param2 then
+            return head_pos, foot_pos
+        end
+
+    else
+        if node.param2 == 2 then
+            head_pos.z = pos.z - 1
+        elseif node.param2 == 3 then
+            head_pos.x = pos.x - 1
+        elseif node.param2 == 0 then
+            head_pos.z = pos.z + 1
+        elseif node.param2 == 1 then
+            head_pos.x = pos.x + 1
+        end
+
+        local head_node = minetest.get_node(head_pos)
+
+        if cottages.furniture.is_head_of(node.name, head_node.name) and node.param2 == head_node.param2 then
+            return head_pos, foot_pos
+        end
+    end
+end
+
+function cottages.furniture.sleep_in_bed(pos, node, player)
+    if not (cottages.has.player_api and cottages.furniture.allow_sit(player) and pos and node and node.name) then
         return
     end
 
-    local animation = default.player_get_animation(clicker)
-    local pname = clicker:get_player_name()
+    local player_name = player:get_player_name()
+    local animation = assert(player_api.get_animation(player), ("%s has no animation?!"):format(player_name))
 
-    local p_above = minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z})
-    if (not (p_above) or not (p_above.name) or p_above.name ~= 'air') then
-        minetest.chat_send_player(pname, "This place is too narrow for sleeping. At least for you!")
+    if animation.animation == "lay" then
+        cottages.furniture.get_up(pos, player)
+        minetest.chat_send_player(player_name, "That was enough sleep for now. You stand up again.")
         return
     end
 
-    local place_name = 'place'
-    -- if only one node is present, the player can only sit
-    -- sleeping requires a bed head+foot or two sleeping mats
-    local allow_sleep = false
-    local new_animation = 'sit'
+    local bed_type = cottages.furniture.is_bed(node.name) and "bed" or "mat"
+    local head_pos, foot_pos = cottages.furniture.is_valid_bed(pos, node)
 
-    -- let players get back up
-    if (animation and animation.animation == "lay") then
-        default.player_attached[pname] = false
-        clicker:set_pos({x = pos.x, y = pos.y - 0.5, z = pos.z})
-        clicker:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-        clicker:set_physics_override(1, 1, 1)
-        default.player_set_animation(clicker, "stand", 30)
-        minetest.chat_send_player(pname, 'That was enough sleep for now. You stand up again.')
-        return
-    end
+    for _, p in ipairs({head_pos, foot_pos}) do
+        if p then
+            for y = 1, 2 do
+                local node_above = minetest.get_node(vector.add(p, {x = 0, y = y, z = 0}))
 
-    local second_node_pos = {x = pos.x, y = pos.y, z = pos.z}
-    -- the node that will contain the head of the player
-    local p = {x = pos.x, y = pos.y, z = pos.z}
-    -- the player's head is pointing in this direction
-    local dir = node.param2
-    -- it would be odd to sleep in half a bed
-    if (node.name == 'cottages:bed_head') then
-        if (node.param2 == 0) then
-            second_node_pos.z = pos.z - 1
-        elseif (node.param2 == 1) then
-            second_node_pos.x = pos.x - 1
-        elseif (node.param2 == 2) then
-            second_node_pos.z = pos.z + 1
-        elseif (node.param2 == 3) then
-            second_node_pos.x = pos.x + 1
-        end
-        local node2 = minetest.get_node(second_node_pos)
-        if (not (node2) or not (node2.param2) or not (node.param2)
-            or node2.name ~= 'cottages:bed_foot'
-            or node2.param2 ~= node.param2) then
-            allow_sleep = false
-        else
-            allow_sleep = true
-        end
-        place_name = 'bed'
-
-        -- if the player clicked on the foot of the bed, locate the head
-    elseif (node.name == 'cottages:bed_foot') then
-        if (node.param2 == 2) then
-            second_node_pos.z = pos.z - 1
-        elseif (node.param2 == 3) then
-            second_node_pos.x = pos.x - 1
-        elseif (node.param2 == 0) then
-            second_node_pos.z = pos.z + 1
-        elseif (node.param2 == 1) then
-            second_node_pos.x = pos.x + 1
-        end
-        local node2 = minetest.get_node(second_node_pos)
-        if (not (node2) or not (node2.param2) or not (node.param2)
-            or node2.name ~= 'cottages:bed_head'
-            or node2.param2 ~= node.param2) then
-            allow_sleep = false
-        else
-            allow_sleep = true
-        end
-        if (allow_sleep == true) then
-            p = {x = second_node_pos.x, y = second_node_pos.y, z = second_node_pos.z}
-        end
-        place_name = 'bed'
-
-    elseif (node.name == 'cottages:sleeping_mat' or node.name == 'cottages:straw_mat' or node.name == 'cottages:sleeping_mat_head') then
-        place_name = 'mat'
-        dir = node.param2
-        allow_sleep = false
-        -- search for a second mat right next to this one
-        local offset = {{x = 0, z = -1}, {x = -1, z = 0}, {x = 0, z = 1}, {x = 1, z = 0}}
-        for i, off in ipairs(offset) do
-            node2 = minetest.get_node({x = pos.x + off.x, y = pos.y, z = pos.z + off.z})
-            if (node2.name == 'cottages:sleeping_mat' or node2.name == 'cottages:straw_mat' or node.name == 'cottages:sleeping_mat_head') then
-                -- if a second mat is found, sleeping is possible
-                allow_sleep = true
-                dir = i - 1
+                if node_above.name ~= "air" then
+                    minetest.chat_send_player(
+                            player_name,
+                            S("This place is too narrow for sleeping. At least for you!")
+                    )
+                    return
+                end
             end
         end
     end
 
-    -- set the right height for the bed
-    if (place_name == 'bed') then
-        p.y = p.y + 0.4
-    end
-    if (allow_sleep == true) then
-        -- set the right position (middle of the bed)
-        if (dir == 0) then
-            p.z = p.z - 0.5
-        elseif (dir == 1) then
-            p.x = p.x - 0.5
-        elseif (dir == 2) then
-            p.z = p.z + 0.5
-        elseif (dir == 3) then
-            p.x = p.x + 0.5
-        end
-    end
+    if player_api.player_attached[player_name] and animation.animation == "sit" then
+        if head_pos and foot_pos then
+            player_api.set_animation(player, "lay")
+            player:set_eye_offset({x = 0, y = -14, z = 2}, {x = 0, y = 0, z = 0})
+            minetest.chat_send_player(player_name, S("You lie down and take a nap. A right-click will wake you up."))
 
-    if (default.player_attached[pname] and animation.animation == "sit") then
-        -- just changing the animation...
-        if (allow_sleep == true) then
-            default.player_set_animation(clicker, "lay", 30)
-            clicker:set_eye_offset({x = 0, y = -14, z = 2}, {x = 0, y = 0, z = 0})
-            minetest.chat_send_player(pname, 'You lie down and take a nap. A right-click will wake you up.')
-            return
-            -- no sleeping on this place
         else
-            default.player_attached[pname] = false
-            clicker:set_pos({x = pos.x, y = pos.y - 0.5, z = pos.z})
-            clicker:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-            clicker:set_physics_override(1, 1, 1)
-            default.player_set_animation(clicker, "stand", 30)
-            minetest.chat_send_player(pname, 'That was enough sitting around for now. You stand up again.')
-            return
+            cottages.furniture.get_up(pos, player)
+            minetest.chat_send_player(player_name, S("That was enough sitting around for now. You stand up again."))
         end
-    end
 
-    clicker:set_eye_offset({x = 0, y = -7, z = 2}, {x = 0, y = 0, z = 0})
-    clicker:set_pos(p)
-    default.player_set_animation(clicker, new_animation, 30)
-    clicker:set_physics_override(0, 0, 0)
-    default.player_attached[pname] = true
-
-    if (allow_sleep == true) then
-        minetest.chat_send_player(pname, 'Aaah! What a comftable ' .. place_name .. '. A second right-click will let you sleep.')
     else
-        minetest.chat_send_player(pname, 'Comftable, but not good enough for a nap. Right-click again if you want to get back up.')
+        cottages.furniture.stop_moving(player)
+
+        player_api.set_animation(player, "sit")
+        player_api.player_attached[player_name] = true
+
+        local sleep_pos = vector.copy(pos)
+
+        if bed_type == "bed" then
+            -- set the right height for the bed
+            sleep_pos.y = sleep_pos.y + 0.4
+        elseif bed_type == "mat" then
+            sleep_pos.y = sleep_pos.y - 0.4
+        end
+
+        if head_pos and foot_pos then
+            sleep_pos.x = (head_pos.x + foot_pos.x) / 2
+            sleep_pos.z = (head_pos.z + foot_pos.z) / 2
+        end
+
+        player:set_eye_offset({x = 0, y = -7, z = 2}, {x = 0, y = 0, z = 0})
+        player:set_pos(sleep_pos)
+
+        if head_pos and foot_pos then
+            minetest.chat_send_player(
+                player_name,
+                S("Aaah! What a comfortable @1. A second right-click will let you sleep.", bed_type)
+            )
+        else
+            minetest.chat_send_player(
+                player_name,
+                S("Comfortable, but not good enough for a nap. Right-click again if you want to get back up.")
+            )
+        end
     end
 end

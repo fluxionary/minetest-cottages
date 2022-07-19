@@ -3,14 +3,6 @@
 -- TODO: store correct bucket texture when loading the world anew
 -- TODO: show particles when running? distinguish between running/idle state? (with punch?)
 
--- well for getting water
---   * has some storage space for buckets (filled with water, river water or empty)
---   * only the owner can use the bucket store and the well
---   * the bucket will be added as an entity and slowly rotate
---     once filled, the texture of the bucket is changed
---   * full (water or river water) buckets can be emptied
---   * by default public; but can also be made private
-
 
 -- how many seconds does it take to fill a bucket?
 cottages.water_fill_time = 10
@@ -35,7 +27,7 @@ minetest.register_entity("cottages:bucket_entity", {
             tmp.texture = nil
         else
             if staticdata ~= nil and staticdata ~= "" then
-                local data = staticdata:split(';')
+                local data = staticdata:split(";")
                 if data and data[1] and data[2] then
                     self.nodename = data[1]
                     self.texture = data[2]
@@ -51,15 +43,15 @@ minetest.register_entity("cottages:bucket_entity", {
             local objs = minetest.get_objects_inside_radius(entity_pos, 0.5)
             for _, obj in ipairs(objs) do
                 if obj ~= self.object and
-                    obj:get_luaentity() and
-                    obj:get_luaentity().name == "cottages:bucket_entity" and
-                    obj:get_luaentity().nodename == self.nodename and
-                    obj:get_properties() and
-                    obj:get_properties().textures and
-                    obj:get_properties().textures[1] == self.texture then
+                        obj:get_luaentity() and
+                        obj:get_luaentity().name == "cottages:bucket_entity" and
+                        obj:get_luaentity().nodename == self.nodename and
+                        obj:get_properties() and
+                        obj:get_properties().textures and
+                        obj:get_properties().textures[1] == self.texture then
                     minetest.log("action", "[cottages] Removing extra " ..
-                        self.texture .. " found in " .. self.nodename .. " at " ..
-                        minetest.pos_to_string(entity_pos))
+                            self.texture .. " found in " .. self.nodename .. " at " ..
+                            minetest.pos_to_string(entity_pos))
                     self.object:remove()
                     break
                 end
@@ -68,26 +60,26 @@ minetest.register_entity("cottages:bucket_entity", {
     end,
     get_staticdata = function(self)
         if self.nodename ~= nil and self.texture ~= nil then
-            return self.nodename .. ';' .. self.texture
+            return self.nodename .. ";" .. self.texture
         end
         return ""
     end,
 })
 
 cottages.water_gen_fill_bucket = function(pos)
-    if (not (pos)) then
+    if not (pos) then
         return
     end
     local meta = minetest.get_meta(pos)
     local bucket = meta:get_string("bucket")
     -- nothing to do
-    if (not (bucket) or bucket ~= "bucket:bucket_empty") then
+    if not (bucket) or bucket ~= "bucket:bucket_empty" then
         return
     end
     -- abort if the water has not been running long enough
     -- (the player may have removed a bucket before it was full)
     start = meta:get_string("fillstarttime")
-    if ((minetest.get_us_time() / 1000000) - tonumber(start) < cottages.water_fill_time - 2) then
+    if (minetest.get_us_time() / 1000000) - tonumber(start) < cottages.water_fill_time - 2 then
         return
     end
 
@@ -146,23 +138,23 @@ minetest.register_node("cottages:water_gen", {
         local meta = minetest.get_meta(pos)
         local spos = pos.x .. "," .. pos.y .. "," .. pos.z
         meta:set_string("formspec",
-            "size[8,9]" ..
-                "label[3.0,0.0;Tree trunk well]" ..
-                "label[1.5,0.7;Punch the well while wielding an empty bucket.]" ..
-                "label[1.5,1.0;Your bucket will slowly be filled with river water.]" ..
-                "label[1.5,1.3;Punch again to get the bucket back when it is full.]" ..
-                "label[1.0,2.9;Internal bucket storage (passive storage only):]" ..
-                "item_image[0.2,0.7;1.0,1.0;bucket:bucket_empty]" ..
-                "item_image[0.2,1.7;1.0,1.0;bucket:bucket_river_water]" ..
-                "label[1.5,1.9;Punch well with full water bucket in order to empty bucket.]" ..
-                "button_exit[6.0,0.0;2,0.5;public;" .. S("Public?") .. "]" ..
-                "list[nodemeta:" .. spos .. ";main;1,3.3;8,1;]" ..
-                "list[current_player;main;0,4.85;8,1;]" ..
-                "list[current_player;main;0,6.08;8,3;8]" ..
-                "listring[nodemeta:" .. spos .. ";main]" ..
-                "listring[current_player;main]")
+                "size[8,9]" ..
+                        "label[3.0,0.0;Tree trunk well]" ..
+                        "label[1.5,0.7;Punch the well while wielding an empty bucket.]" ..
+                        "label[1.5,1.0;Your bucket will slowly be filled with river water.]" ..
+                        "label[1.5,1.3;Punch again to get the bucket back when it is full.]" ..
+                        "label[1.0,2.9;Internal bucket storage (passive storage only):]" ..
+                        "item_image[0.2,0.7;1.0,1.0;bucket:bucket_empty]" ..
+                        "item_image[0.2,1.7;1.0,1.0;bucket:bucket_river_water]" ..
+                        "label[1.5,1.9;Punch well with full water bucket in order to empty bucket.]" ..
+                        "button_exit[6.0,0.0;2,0.5;public;" .. S("Public?") .. "]" ..
+                        "list[nodemeta:" .. spos .. ";main;1,3.3;8,1;]" ..
+                        "list[current_player;main;0,4.85;8,1;]" ..
+                        "list[current_player;main;0,6.08;8,3;8]" ..
+                        "listring[nodemeta:" .. spos .. ";main]" ..
+                        "listring[current_player;main]")
         local inv = meta:get_inventory()
-        inv:set_size('main', 6)
+        inv:set_size("main", 6)
         meta:set_string("infotext", S("Public tree trunk well")) -- (punch with empty bucket to fill bucket)")
     end,
     after_place_node = function(pos, placer)
@@ -179,15 +171,15 @@ minetest.register_node("cottages:water_gen", {
         local bucket = meta:get_string("bucket")
         local start = meta:get_string("fillstarttime")
         return inv:is_empty("main")
-            and default.can_interact_with_node(player, pos)
-            and (not (bucket) or bucket == "")
-            and ((not (start) or start == "" or
-            (minetest.get_us_time() / 1000000) - tonumber(start)
-                >= cottages.water_fill_time - 2))
+                and default.can_interact_with_node(player, pos)
+                and (not (bucket) or bucket == "")
+                and ((not (start) or start == "" or
+                (minetest.get_us_time() / 1000000) - tonumber(start)
+                        >= cottages.water_fill_time - 2))
     end,
     -- no inventory move allowed
     allow_metadata_inventory_move = function(pos, from_list, from_index,
-        to_list, to_index, count, player)
+                                             to_list, to_index, count, player)
         return 0
     end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
@@ -199,8 +191,8 @@ minetest.register_node("cottages:water_gen", {
         -- only for buckets
         local sname = stack:get_name()
         if (sname ~= "bucket:bucket_empty"
-            and sname ~= "bucket:bucket_water"
-            and sname ~= "bucket:bucket_river_water") then
+                and sname ~= "bucket:bucket_water"
+                and sname ~= "bucket:bucket_river_water") then
             return 0
         end
         return stack:get_count()
@@ -215,11 +207,11 @@ minetest.register_node("cottages:water_gen", {
     on_blast = function()
     end,
     on_receive_fields = function(pos, formname, fields, sender)
-        cottages.switch_public(pos, formname, fields, sender, 'tree trunk well')
+        cottages.switch_public(pos, formname, fields, sender, "tree trunk well")
     end,
     -- punch to place and retrieve bucket
     on_punch = function(pos, node, puncher, pointed_thing)
-        if (not (pos) or not (node) or not (puncher)) then
+        if not (pos) or not (node) or not (puncher) then
             return
         end
         -- only the owner can use the well
@@ -227,9 +219,9 @@ minetest.register_node("cottages:water_gen", {
         local meta = minetest.get_meta(pos)
         local owner = meta:get_string("owner")
         local public = meta:get_string("public")
-        if (name ~= owner and public ~= "public") then
+        if name ~= owner and public ~= "public" then
             minetest.chat_send_player(name,
-                S("This tree trunk well is owned by %s. You can't use it."):format(owner))
+                    S("This tree trunk well is owned by %s. You can't use it."):format(owner))
             return
         end
 
@@ -239,16 +231,16 @@ minetest.register_node("cottages:water_gen", {
         -- is the well working on something? (either empty or full bucket)
         local bucket = meta:get_string("bucket")
         -- there is a bucket loaded - either empty or full
-        if (bucket and bucket ~= "" and bucket ~= "bucket:bucket_empty") then
-            if (not (pinv:room_for_item("main", bucket))) then
+        if bucket and bucket ~= "" and bucket ~= "bucket:bucket_empty" then
+            if not (pinv:room_for_item("main", bucket)) then
                 minetest.chat_send_player(puncher:get_player_name(),
-                    S("Sorry. You have no room for the bucket. Please free some " ..
-                        "space in your inventory first!"))
+                        S("Sorry. You have no room for the bucket. Please free some " ..
+                                "space in your inventory first!"))
                 return
             end
-        elseif (bucket and bucket == "bucket:bucket_empty") then
+        elseif bucket and bucket == "bucket:bucket_empty" then
             minetest.chat_send_player(puncher:get_player_name(),
-                S("Please wait until your bucket has been filled."))
+                    S("Please wait until your bucket has been filled."))
             -- do not give the empty bucket back immediately
             return
         end
@@ -265,7 +257,7 @@ minetest.register_node("cottages:water_gen", {
         end
 
         -- the player gets the bucket (either empty or full) into his inventory
-        if (bucket and bucket ~= "") then
+        if bucket and bucket ~= "" then
             pinv:add_item("main", bucket)
             meta:set_string("bucket", "")
             -- we are done
@@ -276,8 +268,8 @@ minetest.register_node("cottages:water_gen", {
         -- and will slowly fill it
         local wielded = puncher:get_wielded_item()
         if (wielded
-            and wielded:get_name()
-            and wielded:get_name() == "bucket:bucket_empty") then
+                and wielded:get_name()
+                and wielded:get_name() == "bucket:bucket_empty") then
             -- remember that we got a bucket loaded
             meta:set_string("bucket", "bucket:bucket_empty")
             -- create the entity
@@ -295,10 +287,10 @@ minetest.register_node("cottages:water_gen", {
         end
         -- buckets can also be emptied here
         if (wielded
-            and wielded:get_name()
-            and (wielded:get_name() == "bucket:bucket_water"
-            or wielded:get_name() == "bucket:bucket_river_water")
-            and (pinv:room_for_item("main", "bucket:bucket_empty"))) then
+                and wielded:get_name()
+                and (wielded:get_name() == "bucket:bucket_water"
+                or wielded:get_name() == "bucket:bucket_river_water")
+                and (pinv:room_for_item("main", "bucket:bucket_empty"))) then
             -- remove the full bucket from the players inventory
             pinv:remove_item("main", wielded:get_name())
             -- add empty bucket
@@ -315,11 +307,11 @@ minetest.register_node("cottages:water_gen", {
 
 -- a well (will fill water buckets) crafted from wooden materials
 minetest.register_craft({
-    output = 'cottages:water_gen',
+    output = "cottages:water_gen",
     recipe = {
-        {'default:stick', '', ''},
-        {'default:tree', 'bucket:bucket_empty', 'bucket:bucket_empty'},
-        {'default:tree', 'default:tree', 'default:tree'},
+        {"default:stick", "", ""},
+        {"default:tree", "bucket:bucket_empty", "bucket:bucket_empty"},
+        {"default:tree", "default:tree", "default:tree"},
     }
 })
 

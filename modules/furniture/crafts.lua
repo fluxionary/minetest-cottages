@@ -1,24 +1,25 @@
+local ci = cottages.craftitem
 
----------------------------------------------------------------------------------------
--- crafting receipes
----------------------------------------------------------------------------------------
-minetest.register_craft({
-    output = "cottages:bed_foot",
-    recipe = {
-        {cottages.craftitem_wool, "", "", },
-        {cottages.craftitem_wood, "", "", },
-        {cottages.craftitem_stick, "", "", }
-    }
-})
+if ci.wool and ci.wood and ci.stick then
+    minetest.register_craft({
+        output = "cottages:bed_foot",
+        recipe = {
+            {ci.wool, "", "", },
+            {ci.wood, "", "", },
+            {ci.stick, "", "", }
+        }
+    })
 
-minetest.register_craft({
-    output = "cottages:bed_head",
-    recipe = {
-        {"", "", cottages.craftitem_wool, },
-        {"", cottages.craftitem_stick, cottages.craftitem_wood, },
-        {"", "", cottages.craftitem_stick, }
-    }
-})
+    minetest.register_craft({
+        output = "cottages:bed_head",
+        recipe = {
+            {"", "", ci.wool, },
+            {"", ci.stick, ci.wood, },
+            {"", "", ci.stick, }
+        }
+    })
+end
+
 
 minetest.register_craft({
     output = "cottages:sleeping_mat 3",
@@ -34,42 +35,50 @@ minetest.register_craft({
     }
 })
 
-minetest.register_craft({
-    output = "cottages:table",
-    recipe = {
-        {"", cottages.craftitem_slab_wood, "", },
-        {"", cottages.craftitem_stick, ""}
-    }
-})
+if ci.stick and ci.slab_wood then
+    minetest.register_craft({
+        output = "cottages:table",
+        recipe = {
+            {"", ci.slab_wood, "", },
+            {"", ci.stick, ""}
+        }
+    })
+end
 
 minetest.register_craft({
     output = "cottages:bench",
     recipe = {
-        {"", cottages.craftitem_wood, "", },
-        {cottages.craftitem_stick, "", cottages.craftitem_stick, }
+        {"", ci.wood, "", },
+        {ci.stick, "", ci.stick, }
     }
 })
 
-minetest.register_craft({
-    output = "cottages:shelf",
-    recipe = {
-        {cottages.craftitem_stick, cottages.craftitem_wood, cottages.craftitem_stick, },
-        {cottages.craftitem_stick, cottages.craftitem_wood, cottages.craftitem_stick, },
-        {cottages.craftitem_stick, "", cottages.craftitem_stick}
-    }
-})
+if ci.stick and ci.wood then
+    minetest.register_craft({
+        output = "cottages:shelf",
+        recipe = {
+            {ci.stick, ci.wood, ci.stick, },
+            {ci.stick, ci.wood, ci.stick, },
+            {ci.stick, "", ci.stick}
+        }
+    })
+end
 
-minetest.register_craft({
-    output = "cottages:washing 2",
-    recipe = {
-        {cottages.craftitem_stick, },
-        {cottages.craftitem_clay, },
-    }
-})
+if ci.stick and ci.clay then
+    minetest.register_craft({
+        output = "cottages:washing 2",
+        recipe = {
+            {ci.stick, },
+            {ci.clay, },
+        }
+    })
+end
 
-minetest.register_craft({
-    output = "cottages:stovepipe 2",
-    recipe = {
-        {cottages.craftitem_steel, '', cottages.craftitem_steel},
-    }
-})
+if ci.steel then
+    minetest.register_craft({
+        output = "cottages:stovepipe 2",
+        recipe = {
+            {ci.steel, "", ci.steel},
+        }
+    })
+end

@@ -6,6 +6,7 @@ cottages.settings = {
         barrel = settings:get_bool("cottages.barrel.enable", true),
         doorlike = settings:get_bool("cottages.doorlike.enable", true),
         feldweg = settings:get_bool("cottages.feldweg.enable", true),
+        fences = settings:get_bool("cottages.fences.enable", true),
         furniture = settings:get_bool("cottages.furniture.enable", true),
         hay = settings:get_bool("cottages.hay.enable", true),
         historic = settings:get_bool("cottages.historic.enable", true),
@@ -18,7 +19,7 @@ cottages.settings = {
 
     anvil = {
         disable_hammer_repair = settings:get_bool("cottages.anvil.disable_hammer_repair", false),
-        hud_timeout = tonumber(settings:get("cottages.anvil.hud_timeout")) or 2,  -- seconds
+        hud_timeout = tonumber(settings:get("cottages.anvil.hud_timeout")) or 2, -- seconds
     },
 
     handmill = {
@@ -37,8 +38,8 @@ cottages.settings = {
 -- * nodebox: like flat - except that each node has a nodebox that fits to that road node
 -- * mesh: like nodebox - except that it uses a nice roundish model
 if cottages.settings.feldweg.mode ~= "simple" and
-    cottages.settings.feldweg.mode ~= "flat" and
-    cottages.settings.feldweg.mode ~= "nodebox" then
+        cottages.settings.feldweg.mode ~= "flat" and
+        cottages.settings.feldweg.mode ~= "nodebox" then
 
     cottages.settings.feldweg.mode = "mesh"
     -- add the setting to the minetest.conf so that the player can set it there

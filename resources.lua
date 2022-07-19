@@ -30,7 +30,9 @@ if has.farming then
     cottages.craftitem.seed_wheat = "farming:seed_wheat"
 end
 
-if has.moreblocks and minetest.registered_nodes["moreblocks:slab_wood"] then
+if has.stairsplus and has.default then
+    cottages.craftitem.slab_wood = "default:slab_wood_8"
+elseif has.moreblocks and minetest.registered_nodes["moreblocks:slab_wood"] then
     cottages.craftitem.slab_wood = "moreblocks:slab_wood"
 elseif has.stairs then
     cottages.craftitem.slab_wood = "stairs:slab_wood"

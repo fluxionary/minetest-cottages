@@ -1,13 +1,15 @@
+local ci = cottages.craftitem
 
-
-minetest.register_craft({
-    output = "cottages:barrel",
-    recipe = {
-        {cottages.craftitem.wood, "", cottages.craftitem.wood},
-        {cottages.craftitem.steel, "", cottages.craftitem.steel},
-        {cottages.craftitem.wood, cottages.craftitem.wood, cottages.craftitem.wood},
-    },
-})
+if ci.wood and ci.steel then
+    minetest.register_craft({
+        output = "cottages:barrel",
+        recipe = {
+            {ci.wood, "", ci.wood},
+            {ci.steel, "", ci.steel},
+            {ci.wood, ci.wood, ci.wood},
+        },
+    })
+end
 
 minetest.register_craft({
     output = "cottages:tub 2",
