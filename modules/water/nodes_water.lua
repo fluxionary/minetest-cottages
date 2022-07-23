@@ -314,4 +314,3 @@ minetest.register_craft({
 		{"default:tree", "default:tree", "default:tree"},
 	}
 })
-

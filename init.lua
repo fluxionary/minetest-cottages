@@ -33,4 +33,3 @@ cottages.dofile("settings")
 cottages.dofile("util")
 cottages.dofile("resources")
 cottages.dofile("modules", "init")
-

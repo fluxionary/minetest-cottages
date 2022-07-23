@@ -242,4 +242,3 @@ cottages.doorlike.register_hatch(
 		protected = true,
 	}
 )
-

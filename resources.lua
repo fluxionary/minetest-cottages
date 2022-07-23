@@ -1,45 +1,60 @@
 local has = cottages.has
 
------- CRAFTITEMS --------
+local function check_exists(item)
+	if minetest.registered_items[item] then
+		return item
+	end
+end
+
 cottages.craftitem = {}
 
 cottages.craftitem.stick = "group:stick"
 cottages.craftitem.wood = "group:wood"
 
 if has.default then
-	cottages.craftitem.steel = "default:steel_ingot"
-	cottages.craftitem.stone = "default:stone"
-	cottages.craftitem.fence = "default:fence_wood"
-	cottages.craftitem.clay = "default:clay"
-	cottages.craftitem.iron = "default:iron_lump"
-	cottages.craftitem.dirt = "default:dirt"
-	cottages.craftitem.sand = "default:sand"
-	cottages.craftitem.glass = "default:glass"
-	cottages.craftitem.papyrus = "default:papyrus"
-	cottages.craftitem.coal_lump = "default:coal_lump"
-	cottages.craftitem.clay_brick = "default:clay_brick"
-	cottages.craftitem.junglewood = "default:junglewood"
-	cottages.craftitem.chest_locked = "default:chest_locked"
+	cottages.craftitem.chest_locked = check_exists("default:chest_locked")
+	cottages.craftitem.clay_brick = check_exists("default:clay_brick")
+	cottages.craftitem.clay = check_exists("default:clay")
+	cottages.craftitem.coal_lump = check_exists("default:coal_lump")
+	cottages.craftitem.dirt = check_exists("default:dirt")
+	cottages.craftitem.fence = check_exists("default:fence_wood")
+	cottages.craftitem.glass = check_exists("default:glass")
+	cottages.craftitem.iron = check_exists("default:iron_lump")
+	cottages.craftitem.junglewood = check_exists("default:junglewood")
+	cottages.craftitem.ladder = check_exists("default:ladder")
+	cottages.craftitem.papyrus = check_exists("default:papyrus")
+	cottages.craftitem.rail = check_exists("default:rail")
+	cottages.craftitem.sand = check_exists("default:sand")
+	cottages.craftitem.steel = check_exists("default:steel_ingot")
+	cottages.craftitem.stone = check_exists("default:stone")
+end
+
+if has.carts then
+	cottages.craftitem.rail = check_exists("carts:rail")
 end
 
 if has.doors then
-	cottages.craftitem.door = "doors:door_wood"
+	cottages.craftitem.door = check_exists("doors:door_wood")
 end
 
 if has.farming then
-	cottages.craftitem.seed_wheat = "farming:seed_wheat"
+	cottages.craftitem.cotton = check_exists("farming:cotton")
+	cottages.craftitem.seed_wheat = check_exists("farming:seed_wheat")
+	cottages.craftitem.string = check_exists("farming:string")
 end
 
 if has.stairsplus and has.default then
-	cottages.craftitem.slab_wood = "default:slab_wood_8"
+	cottages.craftitem.slab_wood = check_exists("default:slab_wood_8")
+
 elseif has.moreblocks and minetest.registered_nodes["moreblocks:slab_wood"] then
-	cottages.craftitem.slab_wood = "moreblocks:slab_wood"
+	cottages.craftitem.slab_wood = check_exists("moreblocks:slab_wood")
+
 elseif has.stairs then
-	cottages.craftitem.slab_wood = "stairs:slab_wood"
+	cottages.craftitem.slab_wood = check_exists("stairs:slab_wood")
 end
 
 if has.wool then
-	cottages.craftitem.wool = "wool:white"
+	cottages.craftitem.wool = check_exists("wool:white")
 else
 	cottages.craftitem.wool = "cottages:wool"
 end
@@ -72,7 +87,6 @@ if has.default then
 	cottages.sounds.stone = default.node_sound_stone_defaults()
 	cottages.sounds.leaves = default.node_sound_leaves_defaults()
 	cottages.sounds.metal = default.node_sound_metal_defaults()
+
+	cottages.sounds.tool_breaks = "default_tool_breaks"
 end
-
-
-
