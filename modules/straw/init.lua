@@ -1,0 +1,1 @@
+cottages.straw = {}

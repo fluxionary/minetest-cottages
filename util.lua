@@ -1,16 +1,17 @@
 local S = cottages.S
 
 --- if no owner is set, all players may use the node else only the owner
-cottages.player_can_use = function(meta, player)
-	if not player or not meta then
+cottages.player_can_use = function(pos, player)
+	if not (pos and player and minetest.is_player(player)) then
 		return false
 	end
 
 	local player_name = player:get_player_name()
+	local meta = minetest.get_meta(pos)
 	local owner = meta:get_string("owner")
 	local public = meta:get_string("public")
 
-	return public == "public" or not owner or owner == "" or owner == player_name
+	return public == "public" or owner == "" or owner == player_name
 end
 
 

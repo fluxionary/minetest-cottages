@@ -72,11 +72,15 @@ else
 	cottages.texture.furniture = "cottages_minimal_wood.png"
 end
 
+cottages.texture.straw = "cottages_darkage_straw.png"
+
 if has.farming then
 	cottages.texture.wheat_seed = "farming_wheat_seed.png"
-end
 
-cottages.texture.straw = "cottages_darkage_straw.png"
+	if cottages.settings.roof.use_farming_straw_stairs and minetest.registered_nodes["farming:straw"] then
+		cottages.texture.straw = "farming_straw.png"
+	end
+end
 
 ------ SOUNDS --------
 cottages.sounds = {}

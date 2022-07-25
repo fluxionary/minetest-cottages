@@ -29,7 +29,19 @@ cottages.settings = {
 
 	feldweg = {
 		mode = settings:get("cottages.feldweg.mode") or "mesh"
-	}
+	},
+
+	roof = {
+		use_farming_straw_stairs = (
+			settings:get_bool("cottages.roof.use_farming_straw_stairs", false) and
+			minetest.registered_nodes["stairs:stair_straw"]
+		)
+	},
+
+	straw = {
+		handmill_min_per_turn = tonumber(settings:get("cottages.straw.handmill_min_per_turn")) or 1,
+		handmill_max_per_turn = tonumber(settings:get("cottages.straw.handmill_min_per_turn")) or 5,
+	},
 }
 
 -- supported modes:
