@@ -1,7 +1,8 @@
 local S = cottages.S
 
---- if no owner is set, all players may use the node else only the owner
-cottages.player_can_use = function(pos, player)
+local util = {}
+
+function util.player_can_use(pos, player)
 	if not (pos and player and minetest.is_player(player)) then
 		return false
 	end
@@ -9,36 +10,43 @@ cottages.player_can_use = function(pos, player)
 	local player_name = player:get_player_name()
 	local meta = minetest.get_meta(pos)
 	local owner = meta:get_string("owner")
-	local public = meta:get_string("public")
 
-	return public == "public" or owner == "" or owner == player_name
+	return (not minetest.is_protected(pos, player_name)) and owner == "" or owner == player_name
 end
 
+function util.switch_public(pos, formname, fields, sender, name_of_the_thing)
+	minetest.chat_send_all(("formname: %s"):format(formname))
+	if not (formname:match("^cottages:") and fields.public) then
+		return
+	end
 
--- call this in on_receive_fields and add suitable buttons in order
--- to switch between public and private use
-cottages.switch_public = function(pos, formname, fields, sender, name_of_the_thing)
-	-- TODO: check that we're not intercepting a random formspec!
-	-- switch between public and private
+	if not util.player_can_use(pos, sender) then
+		return
+	end
 
+	local sender_name = sender:get_player_name()
 	local meta = minetest.get_meta(pos)
-	local public = meta:get_string("public")
 	local owner = meta:get_string("owner")
 
-	if sender and sender:get_player_name() == owner and fields.public then
-		if public == "public" then
-			meta:set_string("public", "")
-			meta:set_string("infotext",
-				S("Private " .. name_of_the_thing .. " (owned by %s)"):format(owner))
-			minetest.chat_send_player(owner,
-				S("Your " .. name_of_the_thing .. " can only be used by yourself."))
-		else
-			meta:set_string("public", "public")
-			meta:set_string("infotext",
-				S("Public " .. name_of_the_thing .. " (owned by %s)"):format(owner))
-			minetest.chat_send_player(owner,
-				S("Your " .. name_of_the_thing .. " can now be used by other players as well."))
-		end
-		return true
+	if owner == "" then
+		meta:set_string("owner", sender_name)
+		minetest.chat_send_player(sender_name, S("The @1 can only be used by yourself.", S(name_of_the_thing)))
+	else
+		meta:set_string("owner", "")
+		minetest.chat_send_player(sender_name, S("The @1 can now be used by anyone.", S(name_of_the_thing)))
+	end
+
+	return true
+end
+
+function util.check_exists(item)
+	while minetest.registered_aliases[item] do
+		item = minetest.registered_aliases[item]
+	end
+
+	if minetest.registered_items[item] then
+		return item
 	end
 end
+
+cottages.util = util

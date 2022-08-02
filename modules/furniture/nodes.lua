@@ -5,7 +5,7 @@ minetest.register_node("cottages:bed_foot", {
 	drawtype = "nodebox",
 	tiles = {
 		"cottages_beds_bed_top_bottom.png",
-		cottages.texture_furniture,
+		cottages.textures.furniture,
 		"cottages_beds_bed_side.png",
 		"cottages_beds_bed_side.png",
 		"cottages_beds_bed_side.png",
@@ -44,10 +44,10 @@ minetest.register_node("cottages:bed_head", {
 	drawtype = "nodebox",
 	tiles = {
 		"cottages_beds_bed_top_top.png",
-		cottages.texture_furniture,
+		cottages.textures.furniture,
 		"cottages_beds_bed_side_top_r.png",
 		"cottages_beds_bed_side_top_l.png",
-		cottages.texture_furniture,
+		cottages.textures.furniture,
 		"cottages_beds_bed_side.png"
 	},
 	paramtype = "light",

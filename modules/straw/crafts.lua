@@ -1,4 +1,4 @@
-local ci = cottages.craftitem
+local ci = cottages.craftitems
 
 minetest.register_craft({
 	output = "cottages:straw_mat 6",
@@ -57,3 +57,37 @@ minetest.register_craft({
 		{"cottages:straw_bale"},
 	},
 })
+
+---------------------------------
+
+if ci.flour then
+	if ci.seed_barley then
+		cottages.straw.register_quern_craft({input = ci.seed_barley, output = ci.flour})
+	end
+	if ci.seed_oat then
+		cottages.straw.register_quern_craft({input = ci.seed_oat, output = ci.flour})
+	end
+	if ci.seed_rye then
+		cottages.straw.register_quern_craft({input = ci.seed_rye, output = ci.flour})
+	end
+	if ci.seed_wheat then
+		cottages.straw.register_quern_craft({input = ci.seed_wheat, output = ci.flour})
+	end
+end
+
+if ci.rice and ci.rice_flour then
+	cottages.straw.register_quern_craft({input = ci.rice, output = ci.rice_flour})
+end
+
+if ci.barley and ci.seed_barley then
+	cottages.straw.register_threshing_craft({input = ci.barley, output = {ci.seed_barley, ci.straw_mat}})
+end
+if ci.oat and ci.seed_oat then
+	cottages.straw.register_threshing_craft({input = ci.oat, output = {ci.seed_oat, ci.straw_mat}})
+end
+if ci.rye and ci.seed_rye then
+	cottages.straw.register_threshing_craft({input = ci.rye, output = {ci.seed_rye, ci.straw_mat}})
+end
+if ci.wheat and ci.seed_wheat then
+	cottages.straw.register_threshing_craft({input = ci.wheat, output = {ci.seed_wheat, ci.straw_mat}})
+end

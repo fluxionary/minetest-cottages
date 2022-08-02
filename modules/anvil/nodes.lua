@@ -1,4 +1,5 @@
 local S = cottages.S
+local util = cottages.util
 
 local hud_timeout = cottages.settings.anvil.hud_timeout
 
@@ -32,48 +33,40 @@ local anvil_formspec = ([[
 )
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get_string("owner")
-	local player_name = player and player:get_player_name()
-
-	if player_name ~= owner then
+	if not util.player_can_use(pos, player) then
 		return 0
 	end
 
 	local stack_name = stack:get_name()
-	local stack_count = stack:get_count()
 
 	if listname == "hammer" and stack_name ~= "cottages:hammer" then
 		return 0
 	end
 
 	if listname == "input" then
-		if stack:get_wear() == 0 then
-			minetest.chat_send_player(player:get_player_name(),
-				S("The workpiece slot is for damaged tools only."))
+		local player_name = player and player:get_player_name()
+
+		if stack:get_wear() == 0 or not stack:is_known() then
+			minetest.chat_send_player(player:get_player_name(), S("The workpiece slot is for damaged tools only."))
 			return 0
 		end
 
-		if minetest.get_item_group(stack_name, "not_repaired_by_anvil") > 0 then
-			local item_def = minetest.registered_items[stack_name]
-			minetest.chat_send_player(player_name, S("@1 cannot be repaired with an anvil.", item_def.description))
+		if not cottages.anvil.can_repair(stack) then
+			local description = stack:get_short_description() or stack:get_description()
+			minetest.chat_send_player(player_name, S("@1 cannot be repaired with an anvil.", description))
 			return 0
 		end
-	end
-
-	return stack_count
-end
-
-local function allow_metadata_inventory_take(pos, listname, index, stack, player)
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get_string("owner")
-	local player_name = player and player:get_player_name()
-
-	if player_name ~= owner then
-		return 0
 	end
 
 	return stack:get_count()
+end
+
+local function allow_metadata_inventory_take(pos, listname, index, stack, player)
+	if util.player_can_use(pos, player) then
+		return stack:get_count()
+	end
+
+	return 0
 end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
@@ -89,8 +82,8 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
 	return 0
 end
 
-local function get_hud_image(tool_name)
-	local tool_def = minetest.registered_items[tool_name]
+local function get_hud_image(tool)
+	local tool_def = tool:get_definition()
 	if tool_def then
 		if tool_def.inventory_image then
 			return tool_def.inventory_image
@@ -202,11 +195,11 @@ minetest.register_node("cottages:anvil", {
 		local puncher_name = puncher:get_player_name()
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
-		local input = inv:get_stack("input", 1)
-		local tool_name = input:get_name()
+		local tool = inv:get_stack("input", 1)
+		local tool_name = tool:get_name()
 		local owner = meta:get_string("owner")
 
-		if input:is_empty() then
+		if tool:is_empty() then
 			meta:set_string("formspec",
 				anvil_formspec,
 				"label[2.5,0.0;" .. S("Owner: @1", owner) .. "]")
@@ -215,16 +208,15 @@ minetest.register_node("cottages:anvil", {
 
 		-- just to make sure that it really can't get repaired if it should not
 		-- (if the check of placing the item in the input slot failed somehow)
-		if minetest.get_item_group(tool_name, "not_repaired_by_anvil") > 0 then
+		if not cottages.anvil.can_repair(tool) then
 			minetest.chat_send_player(puncher_name, S("@1 is not repairable by the anvil", tool_name))
 			return
 		end
 
-		-- 65535 is max damage
-		local damage_state = 40 - math.floor(input:get_wear() / 1638)
-		local hud_image = get_hud_image(tool_name)
+		local damage_state = 40 - math.floor(40 * tool:get_wear() / 65535)
+		local hud_image = get_hud_image(tool)
 
-		if input:get_wear() > 0 then
+		if tool:get_wear() > 0 then
 			local hud1, hud1_def, hud2, hud3, hud3_def
 
 			if hud_info_by_puncher_name[puncher_name] then
@@ -274,7 +266,7 @@ minetest.register_node("cottages:anvil", {
 		end
 
 		-- tell the player when the job is done
-		if input:get_wear() == 0 then
+		if tool:get_wear() == 0 then
 			-- but only once
 			if meta:get_int("informed") > 0 then
 				return
@@ -283,7 +275,7 @@ minetest.register_node("cottages:anvil", {
 			meta:set_int("informed", 1)
 
 			local tool_desc
-			local meta_description = input:get_meta():get_string("description")
+			local meta_description = tool:get_meta():get_string("description")
 			if meta_description ~= "" then
 				tool_desc = meta_description
 			elseif minetest.registered_items[tool_name] and minetest.registered_items[tool_name].description then
@@ -296,8 +288,8 @@ minetest.register_node("cottages:anvil", {
 		end
 
 		-- do the actual repair
-		input:add_wear(-5000); -- equals to what technic toolshop does in 5 seconds
-		inv:set_stack("input", 1, input)
+		tool:add_wear(-4369)
+		inv:set_stack("input", 1, tool)
 
 		-- damage the hammer slightly
 		wielded:add_wear(100)

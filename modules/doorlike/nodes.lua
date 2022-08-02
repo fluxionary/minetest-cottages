@@ -157,7 +157,7 @@ minetest.register_node("cottages:gate_closed", {
 	description = S("closed fence gate"),
 	drawtype = "nodebox",
 	-- top, bottom, side1, side2, inner, outer
-	tiles = {cottages.texture.furniture},
+	tiles = {cottages.textures.furniture},
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2},
@@ -188,7 +188,7 @@ minetest.register_node("cottages:gate_open", {
 	description = S("opened fence gate"),
 	drawtype = "nodebox",
 	-- top, bottom, side1, side2, inner, outer
-	tiles = {cottages.texture.furniture},
+	tiles = {cottages.textures.furniture},
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drop = "cottages:gate_closed",
@@ -223,7 +223,7 @@ cottages.doorlike.register_hatch(
 	"cottages:hatch_wood",
 	"wooden hatch",
 	"cottages_minimal_wood.png",
-	cottages.craftitem.slab_wood,
+	cottages.craftitems.slab_wood,
 	{
 		groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
 		sounds = cottages.sounds.wood,
@@ -233,7 +233,7 @@ cottages.doorlike.register_hatch(
 	"cottages:hatch_steel",
 	"metal hatch",
 	"cottages_steel_block.png",
-	cottages.craftitem.steel,
+	cottages.craftitems.steel,
 	{
 		groups = {node = 1, cracky = 1, level = 2},
 		sounds = cottages.sounds.metal,

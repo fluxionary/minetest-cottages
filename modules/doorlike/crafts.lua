@@ -1,4 +1,4 @@
-local ci = cottages.craftitem
+local ci = cottages.craftitems
 
 -- transform opend and closed shutters into each other for convenience
 minetest.register_craft({

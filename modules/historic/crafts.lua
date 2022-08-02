@@ -1,4 +1,4 @@
-local ci = cottages.craftitem
+local ci = cottages.craftitems
 
 if ci.iron and ci.stick and ci.steel then
 	minetest.register_craft({

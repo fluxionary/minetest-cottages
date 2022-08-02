@@ -1,4 +1,5 @@
 local S = cottages.S
+local ci = cottages.craftitems
 
 function cottages.roof.register_roof(name, material, tiles)
 	minetest.register_node("cottages:roof_" .. name, {

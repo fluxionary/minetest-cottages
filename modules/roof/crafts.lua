@@ -1,4 +1,4 @@
-local ci = cottages.craftitem
+local ci = cottages.craftitems
 
 minetest.register_craft({
 	output = "cottages:reet",

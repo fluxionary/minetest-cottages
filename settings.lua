@@ -1,37 +1,54 @@
 local settings = minetest.settings
 
 cottages.settings = {
-	enable = {
-		anvil = settings:get_bool("cottages.anvil.enable", true),
-		barrel = settings:get_bool("cottages.barrel.enable", true),
-		doorlike = settings:get_bool("cottages.doorlike.enable", true),
-		feldweg = settings:get_bool("cottages.feldweg.enable", true),
-		fences = settings:get_bool("cottages.fences.enable", true),
-		furniture = settings:get_bool("cottages.furniture.enable", true),
-		hay = settings:get_bool("cottages.hay.enable", true),
-		historic = settings:get_bool("cottages.historic.enable", true),
-		mining = settings:get_bool("cottages.mining.enable", true),
-		pitchfork = settings:get_bool("cottages.pitchfork.enable", true),
-		roof = settings:get_bool("cottages.roof.enable", true),
-		straw = settings:get_bool("cottages.straw.enable", true),
-		water = settings:get_bool("cottages.water.enable", true),
-	},
-
 	anvil = {
+		enabled = settings:get_bool("cottages.anvil.enabled", true),
+
 		disable_hammer_repair = settings:get_bool("cottages.anvil.disable_hammer_repair", false),
 		hud_timeout = tonumber(settings:get("cottages.anvil.hud_timeout")) or 2, -- seconds
 	},
 
-	handmill = {
-		min_per_turn = tonumber(settings:get("cottages.handmill.min_per_turn")) or 0,
-		max_per_turn = tonumber(settings:get("cottages.handmill.max_per_turn")) or 20,
+	barrel = {
+		enabled = settings:get_bool("cottages.barrel.enabled", true),
+	},
+
+	doorlike = {
+		enabled = settings:get_bool("cottages.doorlike.enabled", true),
 	},
 
 	feldweg = {
+		enabled = settings:get_bool("cottages.feldweg.enabled", true),
+
 		mode = settings:get("cottages.feldweg.mode") or "mesh"
 	},
 
+	fences = {
+		enabled = settings:get_bool("cottages.fences.enabled", true),
+	},
+
+	furniture = {
+		enabled = settings:get_bool("cottages.furniture.enabled", true),
+	},
+
+	hay = {
+		enabled = settings:get_bool("cottages.hay.enabled", true),
+	},
+
+	historic = {
+		enabled = settings:get_bool("cottages.historic.enabled", true),
+	},
+
+	mining = {
+		enabled = settings:get_bool("cottages.mining.enabled", true),
+	},
+
+	pitchfork = {
+		enabled = settings:get_bool("cottages.pitchfork.enabled", true),
+	},
+
 	roof = {
+		enabled = settings:get_bool("cottages.roof.enabled", true),
+
 		use_farming_straw_stairs = (
 			settings:get_bool("cottages.roof.use_farming_straw_stairs", false) and
 			minetest.registered_nodes["stairs:stair_straw"]
@@ -39,8 +56,19 @@ cottages.settings = {
 	},
 
 	straw = {
-		handmill_min_per_turn = tonumber(settings:get("cottages.straw.handmill_min_per_turn")) or 1,
-		handmill_max_per_turn = tonumber(settings:get("cottages.straw.handmill_min_per_turn")) or 5,
+		enabled = settings:get_bool("cottages.straw.enabled", true),
+
+		quern_min_per_turn = tonumber(settings:get("cottages.straw.quern_min_per_turn")) or 1,
+		quern_max_per_turn = tonumber(settings:get("cottages.straw.quern_min_per_turn")) or 5,
+
+		threshing_min_per_punch = tonumber(settings:get("cottages.straw.threshing_min_per_punch")) or 10,
+		threshing_max_per_punch = tonumber(settings:get("cottages.straw.threshing_max_per_punch")) or 40,
+	},
+
+	water = {
+		enabled = settings:get_bool("cottages.water.enabled", true),
+
+		well_fill_time = tonumber(settings:get("cotages.water.well_fill_time")) or 10
 	},
 }
 

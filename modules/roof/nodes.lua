@@ -1,5 +1,5 @@
 local S = cottages.S
-local ci = cottages.craftitem
+local ci = cottages.craftitems
 
 if cottages.settings.roof.use_farming_straw_stairs then
 	minetest.register_alias("cottages:roof_straw", "stairs:stair_straw")
@@ -10,9 +10,9 @@ else
 	cottages.roof.register_roof(
 		"straw",
 		"cottages:straw_mat",
-		{cottages.texture.straw, cottages.texture.straw,
-		 cottages.texture.straw, cottages.texture.straw,
-		 cottages.texture.straw, cottages.texture.straw}
+		{cottages.textures.straw, cottages.textures.straw,
+		 cottages.textures.straw, cottages.textures.straw,
+		 cottages.textures.straw, cottages.textures.straw}
 	)
 end
 
@@ -27,41 +27,41 @@ cottages.roof.register_roof(
 cottages.roof.register_roof(
 	"wood",
 	ci.wood,
-	{cottages.texture.roof_wood, cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, cottages.texture.roof_wood}
+	{cottages.textures.roof_wood, cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, cottages.textures.roof_wood}
 )
 
 cottages.roof.register_roof(
 	"black",
 	ci.coal_lump,
-	{"cottages_homedecor_shingles_asphalt.png", cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, "cottages_homedecor_shingles_asphalt.png"}
+	{"cottages_homedecor_shingles_asphalt.png", cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, "cottages_homedecor_shingles_asphalt.png"}
 )
 
 cottages.roof.register_roof(
 	"red",
 	ci.clay_brick,
-	{"cottages_homedecor_shingles_terracotta.png", cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, "cottages_homedecor_shingles_terracotta.png"}
+	{"cottages_homedecor_shingles_terracotta.png", cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, "cottages_homedecor_shingles_terracotta.png"}
 )
 
 cottages.roof.register_roof(
 	"brown",
 	ci.dirt,
-	{"cottages_homedecor_shingles_wood.png", cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, cottages.texture.roof_sides,
-	 cottages.texture.roof_sides, "cottages_homedecor_shingles_wood.png"}
+	{"cottages_homedecor_shingles_wood.png", cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, cottages.textures.roof_sides,
+	 cottages.textures.roof_sides, "cottages_homedecor_shingles_wood.png"}
 )
 
 cottages.roof.register_roof(
 	"slate",
 	ci.stone,
-	{"cottages_slate.png", cottages.texture.roof_sides,
+	{"cottages_slate.png", cottages.textures.roof_sides,
 	 "cottages_slate.png", "cottages_slate.png",
-	 cottages.texture.roof_sides, "cottages_slate.png"}
+	 cottages.textures.roof_sides, "cottages_slate.png"}
 )
 
 --------
@@ -76,9 +76,9 @@ minetest.register_node("cottages:reet", {
 
 minetest.register_node("cottages:slate_vertical", {
 	description = S("Vertical Slate"),
-	tiles = {"cottages_slate.png", cottages.texture.roof_sides,
+	tiles = {"cottages_slate.png", cottages.textures.roof_sides,
 	         "cottages_slate.png", "cottages_slate.png",
-	         cottages.texture.roof_sides, "cottages_slate.png"},
+	         cottages.textures.roof_sides, "cottages_slate.png"},
 	paramtype2 = "facedir",
 	groups = {cracky = 2, stone = 1},
 	sounds = cottages.sounds.stone,

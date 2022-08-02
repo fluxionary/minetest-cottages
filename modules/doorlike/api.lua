@@ -143,7 +143,7 @@ function cottages.doorlike.register_hatch(nodename, description, texture, receip
 		output = nodename,
 		recipe = {
 			{"", "", receipe_item},
-			{receipe_item, cottages.craftitem.stick, ""},
+			{receipe_item, cottages.craftitems.stick, ""},
 			{"", "", ""},
 		}
 	})
