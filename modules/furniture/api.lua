@@ -1,10 +1,12 @@
 local S = cottages.S
 local pts = minetest.pos_to_string
 
+local api = cottages.furniture
+
 local attached_to = {}
 local attached_at = {}
 
-function cottages.furniture.allow_attach(pos, player)
+function api.allow_attach(pos, player)
 	if not minetest.is_player(player) then
 		return false
 	end
@@ -29,7 +31,7 @@ function cottages.furniture.allow_attach(pos, player)
 	return true
 end
 
-function cottages.furniture.get_up(player)
+function api.get_up(player)
 	local player_name = player:get_player_name()
 
 	if cottages.has.player_monoids then
@@ -54,7 +56,7 @@ function cottages.furniture.get_up(player)
 	player:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
 end
 
-function cottages.furniture.stop_moving(player)
+function api.stop_moving(player)
 	if cottages.has.player_monoids then
 		player_monoids.speed:add_change(player, 0, "cottages:furniture")
 		player_monoids.jump:add_change(player, 0, "cottages:furniture")
@@ -65,8 +67,8 @@ function cottages.furniture.stop_moving(player)
 	end
 end
 
-function cottages.furniture.sit_on_bench(pos, node, player)
-	if not (cottages.has.player_api and cottages.furniture.allow_attach(pos, player)) then
+function api.sit_on_bench(pos, node, player)
+	if not (cottages.has.player_api and api.allow_attach(pos, player)) then
 		return
 	end
 
@@ -76,7 +78,7 @@ function cottages.furniture.sit_on_bench(pos, node, player)
 		-- certain versions of minetest have a broken API
 		return
 	elseif animation.animation == "sit" then
-		cottages.furniture.get_up(player)
+		api.get_up(player)
 
 	else
 		-- the bench is not centered; prevent the player from sitting on air
@@ -93,7 +95,7 @@ function cottages.furniture.sit_on_bench(pos, node, player)
 			player_pos.x = player_pos.x - 0.3
 		end
 
-		cottages.furniture.stop_moving(player)
+		api.stop_moving(player)
 
 		player_api.set_animation(player, "sit")
 		player_api.player_attached[player_name] = true
@@ -106,19 +108,19 @@ function cottages.furniture.sit_on_bench(pos, node, player)
 	end
 end
 
-function cottages.furniture.is_head(node_name)
+function api.is_head(node_name)
 	return node_name == "cottages:bed_head" or node_name == "cottages:sleeping_mat_head"
 end
 
-function cottages.furniture.is_bed(node_name)
+function api.is_bed(node_name)
 	return node_name == "cottages:bed_head" or node_name == "cottages:bed_foot"
 end
 
-function cottages.furniture.is_mat(node_name)
+function api.is_mat(node_name)
 	return node_name == "cottages:sleeping_mat_head" or node_name == "cottages:sleeping_mat"
 end
 
-function cottages.furniture.is_head_of(foot_name, head_name)
+function api.is_head_of(foot_name, head_name)
 	if foot_name == "cottages:bed_foot" then
 		return head_name == "cottages:bed_head"
 	elseif foot_name == "cottages:sleeping_mat" then
@@ -126,7 +128,7 @@ function cottages.furniture.is_head_of(foot_name, head_name)
 	end
 end
 
-function cottages.furniture.is_foot_of(head_name, foot_name)
+function api.is_foot_of(head_name, foot_name)
 	if head_name == "cottages:bed_head" then
 		return foot_name == "cottages:bed_foot"
 	elseif head_name == "cottages:sleeping_mat_head" then
@@ -134,11 +136,11 @@ function cottages.furniture.is_foot_of(head_name, foot_name)
 	end
 end
 
-function cottages.furniture.is_valid_bed(pos, node)
+function api.is_valid_bed(pos, node)
 	local head_pos = vector.copy(pos)
 	local foot_pos = vector.copy(pos)
 
-	if cottages.furniture.is_head(node.name) then
+	if api.is_head(node.name) then
 		if node.param2 == 0 then
 			foot_pos.z = foot_pos.z - 1
 		elseif node.param2 == 1 then
@@ -151,7 +153,7 @@ function cottages.furniture.is_valid_bed(pos, node)
 
 		local foot_node = minetest.get_node(foot_pos)
 
-		if cottages.furniture.is_foot_of(node.name, foot_node.name) and node.param2 == foot_node.param2 then
+		if api.is_foot_of(node.name, foot_node.name) and node.param2 == foot_node.param2 then
 			return head_pos, foot_pos
 		end
 
@@ -168,19 +170,19 @@ function cottages.furniture.is_valid_bed(pos, node)
 
 		local head_node = minetest.get_node(head_pos)
 
-		if cottages.furniture.is_head_of(node.name, head_node.name) and node.param2 == head_node.param2 then
+		if api.is_head_of(node.name, head_node.name) and node.param2 == head_node.param2 then
 			return head_pos, foot_pos
 		end
 	end
 end
 
-function cottages.furniture.sleep_in_bed(pos, node, player)
-	if not (cottages.has.player_api and cottages.furniture.allow_attach(pos, player)) then
+function api.sleep_in_bed(pos, node, player)
+	if not (cottages.has.player_api and api.allow_attach(pos, player)) then
 		return
 	end
 
 	local player_name = player:get_player_name()
-	local head_pos, foot_pos = cottages.furniture.is_valid_bed(pos, node)
+	local head_pos, foot_pos = api.is_valid_bed(pos, node)
 
 	for _, p in ipairs({head_pos, foot_pos}) do
 		if p then
@@ -207,7 +209,7 @@ function cottages.furniture.sleep_in_bed(pos, node, player)
 
 	if attached_to[player] then
 		if animation.animation == "lay" then
-			cottages.furniture.get_up(player)
+			api.get_up(player)
 			minetest.chat_send_player(player_name, "That was enough sleep for now. You stand up again.")
 
 		elseif animation.animation == "sit" then
@@ -217,20 +219,20 @@ function cottages.furniture.sleep_in_bed(pos, node, player)
 				minetest.chat_send_player(player_name, S("You lie down and take a nap. A right-click will wake you up."))
 
 			else
-				cottages.furniture.get_up(player)
+				api.get_up(player)
 				minetest.chat_send_player(player_name, S("That was enough sitting around for now. You stand up again."))
 			end
 		end
 
 	else
 		-- sit on the bed before lying down
-		cottages.furniture.stop_moving(player)
+		api.stop_moving(player)
 
 		player_api.set_animation(player, "sit")
 		player_api.player_attached[player_name] = true
 
 		local sleep_pos = vector.copy(pos)
-		local bed_type = cottages.furniture.is_bed(node.name) and "bed" or "mat"
+		local bed_type = api.is_bed(node.name) and "bed" or "mat"
 
 		if bed_type == "bed" then
 			-- set the right height for the bed
@@ -269,16 +271,16 @@ function cottages.furniture.sleep_in_bed(pos, node, player)
 	end
 end
 
-function cottages.furniture.break_attach(pos)
+function api.break_attach(pos)
 	local player = attached_at[pts(pos)]
 	if player then
-		cottages.furniture.get_up(player)
+		api.get_up(player)
 	end
 end
 
 minetest.register_on_leaveplayer(function(player)
 	if attached_to[player] then
-		cottages.furniture.get_up(player)
+		api.get_up(player)
 	end
 end)
 
@@ -286,7 +288,7 @@ minetest.register_globalstep(function(dtime)
 	for player in pairs(attached_to) do
 		local c = player:get_player_control()
 		if c.up or c.down or c.left or c.right or c.jump then
-			cottages.furniture.get_up(player)
+			api.get_up(player)
 		end
 	end
 end)

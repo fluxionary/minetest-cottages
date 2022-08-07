@@ -47,7 +47,7 @@ minetest.register_node("cottages:water_gen", {
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		inv:set_size("main", 6)
-		meta:set_string("formspec", api.get_well_formspec())
+		api.update_well_formspec(pos)
 		api.update_well_infotext(pos)
 	end,
 
@@ -97,7 +97,7 @@ minetest.register_node("cottages:water_gen", {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
-		switch_public(pos, formname, fields, sender, "tree trunk well")
+		switch_public(pos, fields, sender, "well")
 	end,
 
 	on_timer = function(pos, elapsed)
@@ -115,22 +115,6 @@ minetest.register_lbm({
 	nodenames = {"cottages:water_gen"},
 	run_at_every_load = true,
 	action = function(pos, node)
-		local meta = minetest.get_meta(pos)
-		local bucket = meta:get("bucket")
-		if bucket then
-			local entity_pos = vector.add(pos, vector.new(0, 1/4, 0))
-			local obj = minetest.add_entity(entity_pos, "cottages:bucket_entity")
-			local props = obj:get_properties()
-			props.wield_item = bucket
-			obj:set_properties(props)
-
-			if bucket == ci.bucket then
-				local timer = minetest.get_node_timer(pos)
-				if not timer:is_started() then
-					timer:start(settings.well_fill_time)
-				end
-				api.add_effects(pos)
-			end
-		end
+		api.initialize_entity(pos)
 	end
 })

@@ -11,12 +11,15 @@ function util.player_can_use(pos, player)
 	local meta = minetest.get_meta(pos)
 	local owner = meta:get_string("owner")
 
-	return (not minetest.is_protected(pos, player_name)) and owner == "" or owner == player_name
+	return (
+		(owner == "") or
+			(owner == " " and not minetest.is_protected(pos, player_name)) or
+			(owner == player_name)
+	)
 end
 
-function util.switch_public(pos, formname, fields, sender, name_of_the_thing)
-	minetest.chat_send_all(("formname: %s"):format(formname))
-	if not (formname:match("^cottages:") and fields.public) then
+function util.switch_public(pos, fields, sender, name_of_the_thing)
+	if fields.public == nil then
 		return
 	end
 
@@ -30,10 +33,15 @@ function util.switch_public(pos, formname, fields, sender, name_of_the_thing)
 
 	if owner == "" then
 		meta:set_string("owner", sender_name)
-		minetest.chat_send_player(sender_name, S("The @1 can only be used by yourself.", S(name_of_the_thing)))
-	else
+		minetest.chat_send_player(sender_name, S("The @1 is now private.", S(name_of_the_thing)))
+
+	elseif owner == " " then
 		meta:set_string("owner", "")
-		minetest.chat_send_player(sender_name, S("The @1 can now be used by anyone.", S(name_of_the_thing)))
+		minetest.chat_send_player(sender_name, S("The @1 is now fully public.", S(name_of_the_thing)))
+
+	else
+		meta:set_string("owner", " ")
+		minetest.chat_send_player(sender_name, S("The @1 is now protected but not private.", S(name_of_the_thing)))
 	end
 
 	return true
@@ -47,6 +55,13 @@ function util.check_exists(item)
 	if minetest.registered_items[item] then
 		return item
 	end
+end
+
+function util.table_set_all(t, other_table)
+	for key, value in pairs(other_table) do
+		t[key] = value
+	end
+	return t
 end
 
 cottages.util = util

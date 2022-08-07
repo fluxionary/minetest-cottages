@@ -1,4 +1,11 @@
 local S = cottages.S
+local F = minetest.formspec_escape
+local FS = function(...) return F(S(...)) end
+
+local api = cottages.straw
+
+local textures = cottages.textures
+local s = cottages.sounds
 
 local has_ui = cottages.has.unified_inventory
 
@@ -26,10 +33,10 @@ if has_ui then
 	})
 end
 
-cottages.straw.registered_quern_crafts = {}
+api.registered_quern_crafts = {}
 
-function cottages.straw.register_quern_craft(recipe)
-	cottages.straw.registered_quern_crafts[recipe.input] = recipe.output
+function api.register_quern_craft(recipe)
+	api.registered_quern_crafts[recipe.input] = recipe.output
 
 	if has_ui then
 		unified_inventory.register_craft({
@@ -43,7 +50,7 @@ end
 
 local function get_quern_results(input)
 	local item = input:get_name()
-	local output_def = cottages.straw.registered_quern_crafts[item]
+	local output_def = api.registered_quern_crafts[item]
 	if type(output_def) == "string" then
 		return {ItemStack(output_def)}
 
@@ -69,7 +76,59 @@ local function get_quern_results(input)
 	end
 end
 
-function cottages.straw.use_quern(pos, puncher)
+local quern_formspec = ([[
+	size[8,8]
+	image[0,1;1,1;%s]
+	button[6.0,0.0;1.5,0.5;public;%s]
+	list[context;seeds;1,1;1,1;]
+	list[context;flour;5,1;2,2;]
+	label[0,0.5;%s]
+	label[4,0.5;%s]
+	label[0,-0.3;%s]
+	label[0,2.5;%s]
+	label[0,3.0;%s]
+	list[current_player;main;0,4;8,4;]
+	listring[current_player;main]
+	listring[context;seeds]
+	listring[current_player;main]
+	listring[context;flour]
+]]):format(
+	F(cottages.textures.wheat_seed),
+	FS("Public?"),
+	FS("Input:"),
+	FS("Output:"),
+	FS("Quern"),
+	FS("Punch this hand-driven quern"),
+	FS("to grind suitable items.")
+)
+
+function api.update_quern_formspec(pos)
+	local meta = minetest.get_meta(pos)
+	local owner = meta:get_string("owner")
+	if owner == "" then
+		meta:set_string("formspec", quern_formspec)
+
+	else
+		meta:set_string("formspec", quern_formspec ..
+			("label[2.5,0;%s]"):format(FS("Owner: @1", owner)))
+	end
+end
+
+function api.update_quern_infotext(pos)
+	local meta = minetest.get_meta(pos)
+	local owner = meta:get("owner")
+	if not owner then
+		meta:set_string("infotext", S("Public quern, powered by punching"))
+
+	elseif owner == " " then
+		meta:set_string("infotext", S("Protected quern, powered by punching"))
+
+	else
+		meta:set_string("infotext", S("Private quern, powered by punching (owned by @1)", owner))
+	end
+end
+
+function api.use_quern(pos, puncher)
 	if not (pos and puncher and cottages.util.player_can_use(pos, puncher)) then
 		return
 	end
@@ -111,12 +170,35 @@ function cottages.straw.use_quern(pos, puncher)
 	local node = minetest.get_node(pos)
 	node.param2 = (node.param2 + 1) % 4
 	minetest.swap_node(pos, node)
+
+	minetest.add_particlespawner({
+		amount = 30,
+		time = 0.1,
+		collisiondetection = true,
+		texture = textures.dust,
+		minsize = 1,
+		maxsize = 1,
+		minexptime = 0.4,
+		maxexptime = 0.8,
+		minpos = vector.subtract(pos, 0.1),
+		maxpos = vector.add(pos, vector.new(0.1, 0, 0.1)),
+		minvel = vector.new(-1, -0.5, -1),
+		maxvel = vector.new(1, 0.5, 1),
+		minacc = vector.new(0, -3, 0),
+		maxacc = vector.new(0, -3, 0),
+	})
+
+	minetest.sound_play(
+		{name = s.use_quern},
+		{pos = pos, gain = 1, pitch = 0.25},
+		true
+	)
 end
 
-cottages.straw.registered_threshing_crafts = {}
+api.registered_threshing_crafts = {}
 
-function cottages.straw.register_threshing_craft(recipe)
-	cottages.straw.registered_threshing_crafts[recipe.input] = recipe.output
+function api.register_threshing_craft(recipe)
+	api.registered_threshing_crafts[recipe.input] = recipe.output
 
 	if has_ui then
 		unified_inventory.register_craft({
@@ -130,7 +212,7 @@ end
 
 local function get_threshing_results(input)
 	local item = input:get_name()
-	local output_def = cottages.straw.registered_threshing_crafts[item]
+	local output_def = api.registered_threshing_crafts[item]
 	if type(output_def) == "string" then
 		return {ItemStack(output_def)}
 
@@ -156,7 +238,7 @@ local function get_threshing_results(input)
 	end
 end
 
-function cottages.straw.use_threshing_floor(pos, puncher)
+function api.use_threshing_floor(pos, puncher)
 	if not minetest.is_player(puncher) then
 		return
 	end
@@ -176,6 +258,13 @@ function cottages.straw.use_threshing_floor(pos, puncher)
 	local input2 = inv:get_stack("harvest", 2)
 
 	local input_count = input1:get_count() + input2:get_count()
+
+	if input_count == 0 then
+		minetest.chat_send_player(name, S("Nothing left to thresh"))
+
+		return
+	end
+
 	local input_description
 	if input1:is_empty() then
 		input_description = input2:get_short_description() or input2:get_description()
@@ -206,6 +295,47 @@ function cottages.straw.use_threshing_floor(pos, puncher)
 
 	inv:set_stack("harvest", 1, input1)
 	inv:set_stack("harvest", 2, input2)
+
+	local particle_pos = vector.subtract(pos, vector.new(0, 0.25, 0))
+	minetest.add_particlespawner({
+		amount = 10,
+		time = 0.1,
+		collisiondetection = true,
+		texture = textures.straw,
+		minsize = 1,
+		maxsize = 1,
+		minexptime = 0.2,
+		maxexptime = 0.4,
+		minpos = vector.subtract(particle_pos, 0.1),
+		maxpos = vector.add(particle_pos, 0.1),
+		minvel = vector.new(-3, 1, -3),
+		maxvel = vector.new(3, 2, 3),
+		minacc = vector.new(0, -10, 0),
+		maxacc = vector.new(0, -10, 0),
+	})
+
+	minetest.add_particlespawner({
+		amount = 10,
+		time = 0.1,
+		collisiondetection = true,
+		texture = textures.wheat_seed,
+		minsize = 1,
+		maxsize = 1,
+		minexptime = 0.2,
+		maxexptime = 0.4,
+		minpos = vector.subtract(particle_pos, 0.1),
+		maxpos = vector.add(particle_pos, 0.1),
+		minvel = vector.new(-3, 0.5, -3),
+		maxvel = vector.new(3, 1, 3),
+		minacc = vector.new(0, -10, 0),
+		maxacc = vector.new(0, -10, 0),
+	})
+
+	minetest.sound_play(
+		{name = s.use_thresher},
+		{pos = particle_pos, gain = 1, pitch = 0.5},
+		true
+	)
 
 	minetest.chat_send_player(name, S("threshed @1 @2 (@3 are left)",
 		number_to_process,

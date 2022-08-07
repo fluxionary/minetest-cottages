@@ -2,11 +2,13 @@ local F = minetest.formspec_escape
 local S = cottages.S
 local FS = function(...) return F(S(...)) end
 
+local switch_public = cottages.util.switch_public
+
 local cottages_formspec_treshing_floor = ([[
 	size[8,8]
 	image[1.5,0;1,1;%s]
 	image[0,1;1,1;%s]
-	button_exit[6.8,0.0;1.5,0.5;public;%s]
+	button[6.8,0.0;1.5,0.5;public;%s]
 	list[context;harvest;1,1;2,1;]
 	list[context;straw;5,0;2,2;]
 	list[context;seeds;5,2;2,2;]
@@ -79,6 +81,7 @@ minetest.register_node("cottages:threshing_floor", {
 			{-0.50, -0.5, -0.50, 0.50, -0.20, 0.50},
 		}
 	},
+	sounds = cottages.sounds.wood,
 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
@@ -99,7 +102,7 @@ minetest.register_node("cottages:threshing_floor", {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
-		cottages.util.switch_public(pos, formname, fields, sender, "threshing floor")
+		switch_public(pos, fields, sender, "threshing floor")
 	end,
 
 	can_dig = function(pos, player)

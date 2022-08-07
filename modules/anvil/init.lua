@@ -1,7 +1,7 @@
 cottages.anvil = {}
 
 cottages.dofile("modules", "anvil", "api")
-cottages.dofile("modules", "anvil", "tools")
-cottages.dofile("modules", "anvil", "nodes")
+cottages.dofile("modules", "anvil", "hammer")
+cottages.dofile("modules", "anvil", "anvil")
 cottages.dofile("modules", "anvil", "crafts")
 cottages.dofile("modules", "anvil", "compat")

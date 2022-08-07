@@ -19,6 +19,7 @@ cottages = {
 		player_monoids = minetest.get_modpath("player_monoids"),
 		stairs = minetest.get_modpath("stairs"),
 		stairsplus = minetest.get_modpath("stairsplus"),
+		stamina = minetest.get_modpath("stamina") and something,
 		technic = minetest.get_modpath("technic"),
 		unified_inventory = minetest.get_modpath("unified_inventory"),
 		wool = minetest.get_modpath("wool"),

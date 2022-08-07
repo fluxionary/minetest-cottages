@@ -13,6 +13,9 @@ if has.default then
 	sounds.water_fill = "default_water_footstep"
 
 	sounds.tool_breaks = "default_tool_breaks"
+
+	sounds.use_thresher = "default_grass_footstep"
+	sounds.use_quern = "default_gravel_footstep"
 end
 
 if has.env_sounds then

@@ -9,8 +9,11 @@ local player_can_use = cottages.util.player_can_use
 
 local settings = cottages.settings.water
 
-function cottages.water.get_well_formspec()
-	return ([[
+local api = cottages.water
+
+function api.update_well_formspec(pos)
+	local meta = minetest.get_meta(pos)
+	return meta:set_string("formspec", ([[
 		size[8,9]
 		label[3.0,0.0;%s]
 		label[1.5,0.7;%s]
@@ -20,10 +23,10 @@ function cottages.water.get_well_formspec()
 		item_image[0.2,0.7;1.0,1.0;%s]
 		item_image[0.2,1.7;1.0,1.0;%s]
 		label[1.5,1.9;%s]
-		button_exit[6.0,0.0;2,0.5;public;%s]
 		list[context;main;1,3.3;8,1;]
 		list[current_player;main;0,4.85;8,4;]
 		listring[]
+		button[6.0,0.0;2,0.5;public;%s]
 	]]):format(
 		FS("Tree trunk well"),
 		FS("Punch the well while wielding an empty bucket."),
@@ -34,10 +37,10 @@ function cottages.water.get_well_formspec()
 		F(ci.bucket_filled),
 		FS("Punch well with full water bucket in order to empty bucket."),
 		FS("Public?")
-	)
+	))
 end
 
-function cottages.water.update_well_infotext(pos)
+function api.update_well_infotext(pos)
 	local meta = minetest.get_meta(pos)
 	local owner = meta:get("owner")
 	if owner then
@@ -50,7 +53,7 @@ end
 local sound_handles_by_pos = {}
 local particlespawner_ids_by_pos = {}
 
-function cottages.water.add_effects(pos)
+local function add_filling_effects(pos)
 	local entity_pos = vector.add(pos, vector.new(0, 1/4, 0))
 
 	local spos = minetest.pos_to_string(pos)
@@ -76,18 +79,18 @@ function cottages.water.add_effects(pos)
 		texture = "bubble.png",
 		minsize = 1,
 		maxsize = 1,
-		minexptime = 0.1,
-		maxexptime = 0.2,
+		minexptime = 0.4,
+		maxexptime = 0.4,
 		minpos = particle_pos,
 		maxpos = particle_pos,
-		minvel = vector.new(-0.05, -0.1, -0.05),
-		maxvel = vector.new(0.05, -0.15, 0.05),
-		minacc = vector.new(0, -1, 0),
-		maxacc = vector.new(0, -1, 0),
+		minvel = vector.new(-0.1, -0.2, -0.01),
+		maxvel = vector.new(0.1, -0.2, 0.1),
+		minacc = vector.new(0, -2, 0),
+		maxacc = vector.new(0, -2, 0),
 	})
 end
 
-function cottages.water.use_well(pos, puncher)
+function api.use_well(pos, puncher)
 	local player_name = puncher:get_player_name()
 	local meta = minetest.get_meta(pos)
 	local owner = meta:get_string("owner")
@@ -115,7 +118,7 @@ function cottages.water.use_well(pos, puncher)
 			local timer = minetest.get_node_timer(pos)
 			timer:start(settings.well_fill_time)
 
-			cottages.water.add_effects(pos)
+			add_filling_effects(pos)
 
 		elseif wielded_name == ci.bucket_filled then
 			-- empty a bucket
@@ -134,7 +137,7 @@ function cottages.water.use_well(pos, puncher)
 		local timer = minetest.get_node_timer(pos)
 		if not timer:is_started() then
 			timer:start(settings.well_fill_time)
-			cottages.water.add_effects(pos)
+			add_filling_effects(pos)
 		end
 
 	elseif bucket == ci.bucket_filled then
@@ -151,7 +154,7 @@ function cottages.water.use_well(pos, puncher)
 	end
 end
 
-function cottages.water.fill_bucket(pos)
+function api.fill_bucket(pos)
 	local entity_pos = vector.add(pos, vector.new(0, 1/4, 0))
 
 	for _, obj in ipairs(minetest.get_objects_inside_radius(entity_pos, .1)) do
@@ -174,5 +177,25 @@ function cottages.water.fill_bucket(pos)
 	local id = particlespawner_ids_by_pos[spos]
 	if id then
 		minetest.delete_particlespawner(id)
+	end
+end
+
+function api.initialize_entity(pos)
+	local meta = minetest.get_meta(pos)
+	local bucket = meta:get("bucket")
+	if bucket then
+		local entity_pos = vector.add(pos, vector.new(0, 1/4, 0))
+		local obj = minetest.add_entity(entity_pos, "cottages:bucket_entity")
+		local props = obj:get_properties()
+		props.wield_item = bucket
+		obj:set_properties(props)
+
+		if bucket == ci.bucket then
+			local timer = minetest.get_node_timer(pos)
+			if not timer:is_started() then
+				timer:start(settings.well_fill_time)
+			end
+			add_filling_effects(pos)
+		end
 	end
 end

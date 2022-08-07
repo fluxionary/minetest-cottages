@@ -1,5 +1,7 @@
 local S = cottages.S
 
+local api = cottages.doorlike
+
 -- propagate shutting/closing of window shutters to window shutters below/above this one
 local offsets = {
 	vector.new(0, 1, 0),
@@ -7,7 +9,7 @@ local offsets = {
 	vector.new(0, 3, 0),
 }
 
-function cottages.doorlike.shutter_operate(pos, old_node_state_name, new_node_state_name)
+function api.shutter_operate(pos, old_node_state_name, new_node_state_name)
 	local new_node = {name = new_node_state_name}
 	local old_node = minetest.get_node(pos)
 	new_node.param2 = old_node.param2
@@ -37,15 +39,15 @@ function cottages.doorlike.shutter_operate(pos, old_node_state_name, new_node_st
 	end
 end
 
-function cottages.doorlike.shutter_open(pos)
-	cottages.doorlike.shutter_operate(pos, "cottages:window_shutter_closed", "cottages:window_shutter_open")
+function api.shutter_open(pos)
+	api.shutter_operate(pos, "cottages:window_shutter_closed", "cottages:window_shutter_open")
 end
 
-function cottages.doorlike.shutter_close(pos)
-	cottages.doorlike.shutter_operate(pos, "cottages:window_shutter_open", "cottages:window_shutter_closed")
+function api.shutter_close(pos)
+	api.shutter_operate(pos, "cottages:window_shutter_open", "cottages:window_shutter_closed")
 end
 
-function cottages.doorlike.is_night()
+function api.is_night()
 	-- at this time, sleeping in a bed is not possible
 	return minetest.get_timeofday() < 0.2 or minetest.get_timeofday() > 0.805
 end
@@ -95,7 +97,7 @@ local function rotate(unrotated)
 	return rotated
 end
 
-function cottages.doorlike.register_hatch(nodename, description, texture, receipe_item, def)
+function api.register_hatch(nodename, description, texture, receipe_item, def)
 	if cottages.has.doors then
 		def = def or {}
 		def.description = S(description)
