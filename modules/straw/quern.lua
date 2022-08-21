@@ -1,6 +1,7 @@
 local S = cottages.S
 local api = cottages.straw
 
+local player_can_use = cottages.util.player_can_use
 local switch_public = cottages.util.switch_public
 
 minetest.register_node("cottages:quern", {
@@ -29,11 +30,11 @@ minetest.register_node("cottages:quern", {
 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", S("Public quern, powered by punching"))
 		local inv = meta:get_inventory()
 		inv:set_size("seeds", 1)
 		inv:set_size("flour", 4)
-		api.update_quernformspec(pos)
+		api.update_quern_infotext(pos)
+		api.update_quern_formspec(pos)
 	end,
 
 	after_place_node = function(pos, placer)
@@ -45,7 +46,10 @@ minetest.register_node("cottages:quern", {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
-		switch_public(pos, formname, fields, sender, "quern")
+		if switch_public(pos, fields, sender, "quern") then
+			api.update_infotext(pos)
+			api.update_formspec(pos)
+		end
 	end,
 
 	can_dig = function(pos, player)
@@ -67,15 +71,11 @@ minetest.register_node("cottages:quern", {
 	end,
 
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-		if not cottages.util.player_can_use(pos, player) then
-			return 0
-		end
-
-		return count
+		return 0
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if not cottages.util.player_can_use(pos, player) then
+		if not player_can_use(pos, player) then
 			return 0
 		end
 
@@ -91,7 +91,7 @@ minetest.register_node("cottages:quern", {
 	end,
 
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if not cottages.util.player_can_use(pos, player) then
+		if not player_can_use(pos, player) then
 			return 0
 		end
 
@@ -99,7 +99,7 @@ minetest.register_node("cottages:quern", {
 	end,
 
 	on_punch = function(pos, node, puncher)
-		cottages.straw.use_quern(pos, puncher)
+		api.use_quern(pos, puncher)
 	end,
 })
 
@@ -109,6 +109,6 @@ minetest.register_lbm({
 	nodenames = {"cottages:quern"},
 	run_at_every_load = false,
 	action = function(pos)
-		api.update_quernformspec(pos)
+		api.update_quern_formspec(pos)
 	end
 })

@@ -19,6 +19,7 @@ if has.default then
 	ci.iron = check_exists("default:iron_lump")
 	ci.junglewood = check_exists("default:junglewood")
 	ci.ladder = check_exists("default:ladder")
+	ci.paper = check_exists("default:paper")
 	ci.papyrus = check_exists("default:papyrus")
 	ci.rail = check_exists("default:rail")
 	ci.sand = check_exists("default:sand")

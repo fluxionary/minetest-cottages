@@ -97,7 +97,10 @@ minetest.register_node("cottages:water_gen", {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
-		switch_public(pos, fields, sender, "well")
+		if switch_public(pos, fields, sender, "well") then
+			api.update_infotext(pos)
+			api.update_formspec(pos)
+		end
 	end,
 
 	on_timer = function(pos, elapsed)

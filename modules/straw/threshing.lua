@@ -1,53 +1,8 @@
-local F = minetest.formspec_escape
+local api = cottages.straw
 local S = cottages.S
-local FS = function(...) return F(S(...)) end
 
+local player_can_use = cottages.util.player_can_use
 local switch_public = cottages.util.switch_public
-
-local cottages_formspec_treshing_floor = ([[
-	size[8,8]
-	image[1.5,0;1,1;%s]
-	image[0,1;1,1;%s]
-	button[6.8,0.0;1.5,0.5;public;%s]
-	list[context;harvest;1,1;2,1;]
-	list[context;straw;5,0;2,2;]
-	list[context;seeds;5,2;2,2;]
-	label[1,0.5;%s]
-	label[4,0.0;%s]
-	label[4,2.0;%s]
-	label[0,0;%s]
-	label[0,2.5;%s]
-	label[0,3.0;%s]
-	list[current_player;main;0,4;8,4;]
-	listring[current_player;main]
-	listring[context;harvest]
-	listring[current_player;main]
-	listring[context;straw]
-	listring[current_player;main]
-	listring[context;seeds]
-]]):format(
-	F(cottages.textures.stick),
-	F(cottages.textures.wheat),
-	FS("Public?"),
-	FS("Input:"),
-	FS("Output1:"),
-	FS("Output2:"),
-	FS("Threshing Floor"),
-	FS("Punch threshing floor with a stick"),
-	FS("to get straw and seeds from wheat.")
-)
-
-local function update_formspec(pos)
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get_string("owner")
-	if owner == "" then
-		meta:set_string("formspec", cottages_formspec_treshing_floor)
-
-	else
-		meta:set_string("formspec", cottages_formspec_treshing_floor ..
-			("label[2.5,0;%s]"):format(FS("Owner: @1", owner)))
-	end
-end
 
 minetest.register_node("cottages:threshing_floor", {
 	description = S("threshing floor\npunch with a stick to operate"),
@@ -85,24 +40,26 @@ minetest.register_node("cottages:threshing_floor", {
 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", S("Public threshing floor"))
 		local inv = meta:get_inventory()
 		inv:set_size("harvest", 2)
 		inv:set_size("straw", 4)
 		inv:set_size("seeds", 4)
-		update_formspec(pos)
+		api.update_threshing_infotext(pos)
+		api.update_threshing_formspec(pos)
 	end,
 
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
-		local owner = meta:get_string("owner")
 		meta:set_string("owner", placer:get_player_name() or "")
-		meta:set_string("infotext", S("Private threshing floor (owned by @1)", owner))
-		update_formspec(pos)
+		api.update_threshing_infotext(pos)
+		api.update_threshing_formspec(pos)
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
-		switch_public(pos, fields, sender, "threshing floor")
+		if switch_public(pos, fields, sender, "threshing floor") then
+			api.update_infotext(pos)
+			api.update_formspec(pos)
+		end
 	end,
 
 	can_dig = function(pos, player)
@@ -124,7 +81,7 @@ minetest.register_node("cottages:threshing_floor", {
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if not cottages.util.player_can_use(pos, player) then
+		if not player_can_use(pos, player) then
 			return 0
 		end
 
@@ -140,13 +97,12 @@ minetest.register_node("cottages:threshing_floor", {
 	end,
 
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if not cottages.util.player_can_use(pos, player) then
+		if not player_can_use(pos, player) then
 			return 0
 		end
 
 		return stack:get_count()
 	end,
-
 
 	on_punch = function(pos, node, puncher)
 		cottages.straw.use_threshing_floor(pos, puncher)
@@ -159,6 +115,7 @@ minetest.register_lbm({
 	nodenames = {"cottages:threshing_floor"},
 	run_at_every_load = false,
 	action = function(pos)
-		update_formspec(pos)
+		api.update_threshing_infotext(pos)
+		api.update_threshing_formspec(pos)
 	end
 })

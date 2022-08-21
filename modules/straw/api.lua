@@ -238,6 +238,65 @@ local function get_threshing_results(input)
 	end
 end
 
+local threshing_formspec = ([[
+	size[8,8]
+	image[1.5,0;1,1;%s]
+	image[0,1;1,1;%s]
+	button[6.8,0.0;1.5,0.5;public;%s]
+	list[context;harvest;1,1;2,1;]
+	list[context;straw;5,0;2,2;]
+	list[context;seeds;5,2;2,2;]
+	label[1,0.5;%s]
+	label[4,0.0;%s]
+	label[4,2.0;%s]
+	label[0,0;%s]
+	label[0,2.5;%s]
+	label[0,3.0;%s]
+	list[current_player;main;0,4;8,4;]
+	listring[current_player;main]
+	listring[context;harvest]
+	listring[current_player;main]
+	listring[context;straw]
+	listring[current_player;main]
+	listring[context;seeds]
+]]):format(
+	F(cottages.textures.stick),
+	F(cottages.textures.wheat),
+	FS("Public?"),
+	FS("Input:"),
+	FS("Output1:"),
+	FS("Output2:"),
+	FS("Threshing Floor"),
+	FS("Punch threshing floor with a stick"),
+	FS("to get straw and seeds from wheat.")
+)
+
+function api.update_threshing_formspec(pos)
+	local meta = minetest.get_meta(pos)
+	local owner = meta:get_string("owner")
+	if owner == "" then
+		meta:set_string("formspec", threshing_formspec)
+
+	else
+		meta:set_string("formspec", threshing_formspec ..
+			("label[2.5,0;%s]"):format(FS("Owner: @1", owner)))
+	end
+end
+
+function api.update_threshing_infotext(pos)
+	local meta = minetest.get_meta(pos)
+	local owner = meta:get("owner")
+	if not owner then
+		meta:set_string("infotext", S("Public threshing floor"))
+
+	elseif owner == " " then
+		meta:set_string("infotext", S("Protected threshing floor"))
+
+	else
+		meta:set_string("infotext", S("Private threshing floor (owned by @1)", owner))
+	end
+end
+
 function api.use_threshing_floor(pos, puncher)
 	if not minetest.is_player(puncher) then
 		return

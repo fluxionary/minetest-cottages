@@ -6,10 +6,13 @@ homedecor: is this really a dependancy? is there even an individual mod called h
 https://github.com/Sokomine/cottages/compare/master...BlockySurvival:master
 https://gitea.your-land.de/your-land/cottages/commits/branch/yl_stable
 
-
 cottages.switch_public needs to check that the form comes from the right mod O_o
-
 
 * listrings
 * HUD updates
 * chat_send_player, and automatic limits
+
+stamina integration
+node_entity_queue intergration
+
+anvil: option for using formspec-less interface

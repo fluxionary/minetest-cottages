@@ -27,5 +27,9 @@ stds.cottages = {
 	},
 	read_globals = {
 		"default",
+		"node_entity_queue",
+		"stamina",
+		"unified_inventory",
+
 	},
 }

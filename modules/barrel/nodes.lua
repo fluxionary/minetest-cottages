@@ -38,7 +38,10 @@ local barrel_def = {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
-		switch_public(pos, formname, fields, sender, "anvil")
+		if switch_public(pos, fields, sender, "barrel") then
+			api.update_infotext(pos)
+			api.update_formspec(pos)
+		end
 	end,
 
 	on_construct = function(pos)
@@ -76,7 +79,9 @@ local barrel_def = {
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		if listname == "input" then
+			error("todo")
 		elseif listname == "output" then
+			error("todo")
 
 		end
 		error()

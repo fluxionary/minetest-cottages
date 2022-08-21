@@ -1,87 +1,91 @@
-local settings = minetest.settings
+local s = minetest.settings
 
 cottages.settings = {
 	anvil = {
-		enabled = settings:get_bool("cottages.anvil.enabled", true),
+		enabled = s:get_bool("cottages.anvil.enabled", true),
 
-		disable_hammer_repair = settings:get_bool("cottages.anvil.disable_hammer_repair", false),
-		hammer_wear = tonumber(settings:get("cottages.anvil.hammer_wear")) or 100,
-		hud_timeout = tonumber(settings:get("cottages.anvil.hud_timeout")) or 2, -- seconds
-		repair_amount = tonumber(settings:get("cottages.anvil.repair_amount")) or 4369,
-		stamina = tonumber(settings:get("cottages.anvil.stamina")) or 40,
+		disable_hammer_repair = s:get_bool("cottages.anvil.disable_hammer_repair", false),
+		hammer_wear = tonumber(s:get("cottages.anvil.hammer_wear")) or 100,
+		hud_timeout = tonumber(s:get("cottages.anvil.hud_timeout")) or 2, -- seconds
+		repair_amount = tonumber(s:get("cottages.anvil.repair_amount")) or 4369,
+		stamina = tonumber(s:get("cottages.anvil.stamina")) or 40,
+		formspec_enabled = s:get_bool("cottages.anvil.formspec_enabled", true),
+		tool_hud_enabled = s:get_bool("cottages.anvil.tool_hud_enabled", true),
+		tool_entity_enabled = s:get_bool("cottages.anvil.tool_entity_enabled", false),
+		tool_entity_displacement = tonumber(s:get("anvil.tool_entity_displacement")) or 2 / 16,
 	},
 
 	barrel = {
-		enabled = settings:get_bool("cottages.barrel.enabled", true),
+		enabled = s:get_bool("cottages.barrel.enabled", true),
 
-		max_liquid_amount = tonumber(settings:get("cottages.barrel.max_liquid_amount")) or 99,
+		max_liquid_amount = tonumber(s:get("cottages.barrel.max_liquid_amount")) or 99,
 	},
 
 	doorlike = {
-		enabled = settings:get_bool("cottages.doorlike.enabled", true),
+		enabled = s:get_bool("cottages.doorlike.enabled", true),
 
-		stamina = tonumber(settings:get("cottages.anvil.stamina")) or 1,
+		stamina = tonumber(s:get("cottages.anvil.stamina")) or 1,
 	},
 
 	feldweg = {
-		enabled = settings:get_bool("cottages.feldweg.enabled", true),
+		enabled = s:get_bool("cottages.feldweg.enabled", true),
 
-		mode = settings:get("cottages.feldweg.mode") or "mesh"
+		mode = s:get("cottages.feldweg.mode") or "mesh"
 	},
 
 	fences = {
-		enabled = settings:get_bool("cottages.fences.enabled", true),
+		enabled = s:get_bool("cottages.fences.enabled", true),
 
-		stamina = tonumber(settings:get("cottages.anvil.stamina")) or 1,
+		stamina = tonumber(s:get("cottages.anvil.stamina")) or 1,
 	},
 
 	furniture = {
-		enabled = settings:get_bool("cottages.furniture.enabled", true),
+		enabled = s:get_bool("cottages.furniture.enabled", true),
 	},
 
 	hay = {
-		enabled = settings:get_bool("cottages.hay.enabled", true),
+		enabled = s:get_bool("cottages.hay.enabled", true),
 
-		pitchfork_stamina = tonumber(settings:get("cottages.anvil.stamina")) or 3,
+		pitchfork_stamina = tonumber(s:get("cottages.anvil.stamina")) or 3,
 	},
 
 	historic = {
-		enabled = settings:get_bool("cottages.historic.enabled", true),
+		enabled = s:get_bool("cottages.historic.enabled", true),
 	},
 
 	mining = {
-		enabled = settings:get_bool("cottages.mining.enabled", true),
+		enabled = s:get_bool("cottages.mining.enabled", true),
 	},
 
 	pitchfork = {
-		enabled = settings:get_bool("cottages.pitchfork.enabled", true),
+		enabled = s:get_bool("cottages.pitchfork.enabled", true),
 	},
 
 	roof = {
-		enabled = settings:get_bool("cottages.roof.enabled", true),
+		enabled = s:get_bool("cottages.roof.enabled", true),
 
 		use_farming_straw_stairs = (
-			settings:get_bool("cottages.roof.use_farming_straw_stairs", false) and
+			s:get_bool("cottages.roof.use_farming_straw_stairs", false) and
 			minetest.registered_nodes["stairs:stair_straw"]
 		),
 	},
 
 	straw = {
-		enabled = settings:get_bool("cottages.straw.enabled", true),
+		enabled = s:get_bool("cottages.straw.enabled", true),
 
-		quern_min_per_turn = tonumber(settings:get("cottages.straw.quern_min_per_turn")) or 2,
-		quern_max_per_turn = tonumber(settings:get("cottages.straw.quern_min_per_turn")) or 5,
-		quern_stamina = tonumber(settings:get("cottages.straw.quern_stamina")) or 20,
+		quern_min_per_turn = tonumber(s:get("cottages.straw.quern_min_per_turn")) or 2,
+		quern_max_per_turn = tonumber(s:get("cottages.straw.quern_min_per_turn")) or 5,
+		quern_stamina = tonumber(s:get("cottages.straw.quern_stamina")) or 20,
 
-		threshing_min_per_punch = tonumber(settings:get("cottages.straw.threshing_min_per_punch")) or 5,
-		threshing_max_per_punch = tonumber(settings:get("cottages.straw.threshing_max_per_punch")) or 10,
-		threshing_stamina = tonumber(settings:get("cottages.straw.threshing_stamina")) or 10,
+		threshing_min_per_punch = tonumber(s:get("cottages.straw.threshing_min_per_punch")) or 5,
+		threshing_max_per_punch = tonumber(s:get("cottages.straw.threshing_max_per_punch")) or 10,
+		threshing_stamina = tonumber(s:get("cottages.straw.threshing_stamina")) or 10,
 	},
 
 	water = {
-		enabled = settings:get_bool("cottages.water.enabled", true),
+		enabled = s:get_bool("cottages.water.enabled", true),
 
-		well_fill_time = tonumber(settings:get("cotages.water.well_fill_time")) or 10
+		well_fill_time = tonumber(s:get("cotages.water.well_fill_time")) or 10
 	},
 }
 
