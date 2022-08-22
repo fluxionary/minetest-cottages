@@ -90,9 +90,6 @@ minetest.register_node("cottages:sleeping_mat", {
 	walkable = false,
 	groups = {snappy = 3},
 	sounds = cottages.sounds.leaves,
-	selection_box = {
-		type = "wallmounted",
-	},
 	node_box = {
 		type = "fixed",
 		fixed = {

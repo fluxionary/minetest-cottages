@@ -26,10 +26,23 @@ stds.cottages = {
 		"cottages",
 	},
 	read_globals = {
+	    player_api = {
+	        fields = {
+	            player_attached = {
+                    read_only = false,
+                    other_fields = true,
+	            },
+	        },
+	        other_fields = true,
+	    },
+
+	    "carts",
 		"default",
+		"doors",
 		"node_entity_queue",
+		"player_monoids",
+		"stairs",
 		"stamina",
 		"unified_inventory",
-
 	},
 }

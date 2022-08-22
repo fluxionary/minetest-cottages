@@ -76,32 +76,14 @@ function cottages.roof.register_roof(name, material, tiles)
 		is_ground_content = false,
 	})
 
-	if (not (homedecor_alternative)
-		or (minetest.get_modpath("homedecor") ~= nil)) then
-
-		minetest.register_craft({
-			output = "cottages:roof_" .. name .. " 6",
-			recipe = {
-				{"", "", material},
-				{"", material, ""},
-				{material, "", ""}
-			}
-		})
-	end
-
-	-- make those roof parts that use homedecor craftable without that mod
-	if homedecor_alternative then
-		material = "cottages:roof_wood"
-
-		minetest.register_craft({
-			output = "cottages:roof_" .. name .. " 3",
-			recipe = {
-				{homedecor_alternative, "", material},
-				{"", material, ""},
-				{material, "", ""}
-			}
-		})
-	end
+	minetest.register_craft({
+		output = "cottages:roof_" .. name .. " 6",
+		recipe = {
+			{"", "", material},
+			{"", material, ""},
+			{material, "", ""}
+		}
+	})
 
 	minetest.register_craft({
 		output = "cottages:roof_connector_" .. name,

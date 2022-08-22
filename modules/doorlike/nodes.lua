@@ -1,14 +1,9 @@
 local S = cottages.S
 
------------------------------------------------------------------------------------------------------------
--- small window shutters for single-node-windows; they open at day and close at night if the abm is working
------------------------------------------------------------------------------------------------------------
-
 -- window shutters - they cover half a node to each side
 minetest.register_node("cottages:window_shutter_open", {
 	description = S("opened window shutters"),
 	drawtype = "nodebox",
-	-- top, bottom, side1, side2, inner, outer
 	tiles = {"cottages_minimal_wood.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -36,7 +31,6 @@ minetest.register_node("cottages:window_shutter_open", {
 minetest.register_node("cottages:window_shutter_closed", {
 	description = S("closed window shutters"),
 	drawtype = "nodebox",
-	-- top, bottom, side1, side2, inner, outer
 	tiles = {"cottages_minimal_wood.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -61,13 +55,9 @@ minetest.register_node("cottages:window_shutter_closed", {
 	drop = "cottages:window_shutter_open",
 })
 
-------------------------------------------------------------------------------------------------------------------------------
--- a half door; can be combined to a full door where the upper part can be operated seperately; usually found in barns/stables
-------------------------------------------------------------------------------------------------------------------------------
 minetest.register_node("cottages:half_door", {
 	description = S("half door"),
 	drawtype = "nodebox",
-	-- top, bottom, side1, side2, inner, outer
 	tiles = {"cottages_minimal_wood.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -99,7 +89,8 @@ minetest.register_node("cottages:half_door", {
 		end
 		minetest.swap_node(pos, {name = "cottages:half_door", param2 = param2})
 		-- if the node above consists of a door of the same type, open it as well
-		-- Note: doors beneath this one are not opened! It is a special feature of these doors that they can be opend partly
+		-- Note: doors beneath this one are not opened!
+		-- It is a special feature of these doors that they can be opend partly
 		if node2 ~= nil and node2.name == node.name and node2.param2 == node.param2 then
 			minetest.swap_node({x = pos.x, y = (pos.y + 1), z = pos.z}, {name = "cottages:half_door", param2 = param2})
 		end
@@ -110,7 +101,6 @@ minetest.register_node("cottages:half_door", {
 minetest.register_node("cottages:half_door_inverted", {
 	description = S("half door inverted"),
 	drawtype = "nodebox",
-	-- top, bottom, side1, side2, inner, outer
 	tiles = {"cottages_minimal_wood.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -150,13 +140,9 @@ minetest.register_node("cottages:half_door_inverted", {
 	is_ground_content = false,
 })
 
-------------------------------------------------------------------------------------------------------------------------------
--- this gate for fences solves the "where to store the opened gate" problem by dropping it to the floor in opened state
-------------------------------------------------------------------------------------------------------------------------------
 minetest.register_node("cottages:gate_closed", {
 	description = S("closed fence gate"),
 	drawtype = "nodebox",
-	-- top, bottom, side1, side2, inner, outer
 	tiles = {cottages.textures.furniture},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -187,7 +173,6 @@ minetest.register_node("cottages:gate_closed", {
 minetest.register_node("cottages:gate_open", {
 	description = S("opened fence gate"),
 	drawtype = "nodebox",
-	-- top, bottom, side1, side2, inner, outer
 	tiles = {cottages.textures.furniture},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -215,7 +200,6 @@ minetest.register_node("cottages:gate_open", {
 		minetest.swap_node(pos, {name = "cottages:gate_closed", param2 = node.param2})
 	end,
 	is_ground_content = false,
-	drop = "cottages:gate_closed",
 })
 
 -- further alternate hatch materials: wood, tree, copper_block
@@ -229,6 +213,7 @@ cottages.doorlike.register_hatch(
 		sounds = cottages.sounds.wood,
 	}
 )
+
 cottages.doorlike.register_hatch(
 	"cottages:hatch_steel",
 	"metal hatch",

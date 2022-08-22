@@ -45,7 +45,8 @@ minetest.register_node("cottages:straw_mat", {
 	end
 })
 
--- straw bales are a must for farming environments; if you for some reason do not have the darkage mod installed, this here gets you a straw bale
+-- straw bales are a must for farming environments; if you for some reason do not have the darkage mod installed, this
+-- here gets you a straw bale
 minetest.register_node("cottages:straw_bale", {
 	drawtype = "nodebox",
 	description = S("straw bale"),
