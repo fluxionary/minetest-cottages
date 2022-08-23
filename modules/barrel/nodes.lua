@@ -4,9 +4,8 @@ local api = cottages.barrel
 
 local player_can_use = cottages.util.player_can_use
 local switch_public = cottages.util.switch_public
-local table_set_all = cottages.util.table_set_all
 
-local barrel_def = {
+minetest.register_node("cottages:barrel", {
 	description = S("Barrel (Closed)"),
 	drawtype = "mesh",
 	paramtype = "light",
@@ -14,28 +13,12 @@ local barrel_def = {
 	mesh = "cottages_barrel_closed.obj",
 	tiles = {"cottages_barrel.png"},
 	is_ground_content = false,
-	drop = "cottages:barrel",
 	groups = {
 		snappy = 1,
 		choppy = 2,
 		oddly_breakable_by_hand = 1,
 		flammable = 2
 	},
-
-	on_rightclick = function(pos, node, puncher)
-		if not player_can_use(pos, puncher) then
-			minetest.record_protection_violation(pos, puncher)
-			return
-
-		elseif node.name == "cottages:barrel" then
-			node.name = "cottages:barrel_open"
-			minetest.swap_node(pos, node)
-
-		elseif node.name == "cottages:barrel_open" then
-			node.name = "cottages:barrel"
-			minetest.swap_node(pos, node)
-		end
-	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
 		if switch_public(pos, fields, sender, "barrel") then
@@ -74,46 +57,99 @@ local barrel_def = {
 	end,
 
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-		return false
+		if not player_can_use(pos, player) then
+			return 0
+		end
+
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		local to_stack = inv:get_stack(to_list, to_index)
+
+		if not to_stack:is_empty() then
+			return 0
+		end
+
+		local from_stack = inv:get_stack(from_list, from_index)
+		local item = from_stack:get_name()
+
+		if to_list == "input" then
+			if api.can_drain(pos, item) then
+				return 1
+			end
+
+		elseif to_list == "output" then
+			if api.can_fill(pos, item) then
+				return 1
+			end
+		end
+
+		return 0
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if listname == "input" then
-			error("todo")
-		elseif listname == "output" then
-			error("todo")
-
+		if not player_can_use(pos, player) then
+			return 0
 		end
-		error()
+
+		local item = stack:get_name()
+
+		if listname == "input" then
+			if api.can_drain(pos, item) then
+				return 1
+			end
+
+		elseif listname == "output" then
+			if api.can_fill(pos, item) then
+				return 1
+			end
+		end
+
+		return 0
 	end,
 
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
-		error()
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		local item = stack:get_name()
+
+		if listname == "input" then
+			local empty = api.add_barrel_liquid(pos, item)
+			inv:set_stack(listname, index, empty)
+
+		elseif listname == "output" then
+			local full = api.drain_barrel_liquid(pos, item)
+			inv:set_stack(listname, index, full)
+		end
+
+		api.update_formspec(pos)
+		api.update_infotext(pos)
 	end,
 
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		error()
-	end,
-}
+		if player_can_use(pos, player) then
+			return 1
+		end
 
-minetest.register_node("cottages:barrel", barrel_def)
-local barrel_open_def = table.copy(barrel_def)
-table_set_all(barrel_open_def, {
+		return 0
+	end,
+})
+
+-- this barrel is opened at the top
+minetest.register_node("cottages:barrel_open", {
 	description = S("Barrel (Open)"),
+	drawtype = "mesh",
+	paramtype = "light",
+	paramtype2 = "facedir",
 	mesh = "cottages_barrel.obj",
-	drop = "cottages:barrel",
+	tiles = {"cottages_barrel.png"},
+	is_ground_content = false,
 	groups = {
 		snappy = 1,
 		choppy = 2,
 		oddly_breakable_by_hand = 1,
 		flammable = 2,
-		not_in_creative_inventory = 1,
 	},
-
 })
-
--- this barrel is opened at the top
-minetest.register_node("cottages:barrel_open", barrel_open_def)
 
 -- let's hope "tub" is the correct english word for "bottich"
 minetest.register_node("cottages:tub", {

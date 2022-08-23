@@ -19,7 +19,10 @@ if has.default then
 end
 
 if has.env_sounds then
+	sounds.water_empty = sounds.water_empty or "env_sounds_water"
 	sounds.water_fill = "env_sounds_water"
+	sounds.lava_fill = "env_sounds_lava"
+	sounds.lava_empty = "env_sounds_lava"
 end
 
 cottages.sounds = sounds

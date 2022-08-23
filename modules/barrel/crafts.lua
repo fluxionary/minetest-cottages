@@ -4,6 +4,15 @@ if ci.wood and ci.steel then
 	minetest.register_craft({
 		output = "cottages:barrel",
 		recipe = {
+			{ci.wood, ci.wood, ci.wood},
+			{ci.steel, "", ci.steel},
+			{ci.wood, ci.wood, ci.wood},
+		},
+	})
+
+	minetest.register_craft({
+		output = "cottages:barrel_open",
+		recipe = {
 			{ci.wood, "", ci.wood},
 			{ci.steel, "", ci.steel},
 			{ci.wood, ci.wood, ci.wood},

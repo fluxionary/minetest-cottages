@@ -146,7 +146,6 @@ function api.register_hatch(nodename, description, texture, receipe_item, def)
 		recipe = {
 			{"", "", receipe_item},
 			{receipe_item, cottages.craftitems.stick, ""},
-			{"", "", ""},
 		}
 	})
 end

@@ -4,7 +4,7 @@ if not (minetest.registered_nodes["farming:straw"]) then
 	minetest.register_node("cottages:straw", {
 		drawtype = "normal",
 		description = S("straw"),
-		tiles = {cottages.straw_texture},
+		tiles = {cottages.textures.straw},
 		groups = {hay = 3, snappy = 2, oddly_breakable_by_hand = 2, flammable = 3},
 		sounds = cottages.sounds.leaves,
 		-- the bale is slightly smaller than a full node
@@ -18,9 +18,9 @@ end
 minetest.register_node("cottages:straw_mat", {
 	description = S("layer of straw"),
 	drawtype = "nodebox",
-	tiles = {cottages.straw_texture}, -- done by VanessaE
-	wield_image = cottages.straw_texture,
-	inventory_image = cottages.straw_texture,
+	tiles = {cottages.textures.straw}, -- done by VanessaE
+	wield_image = cottages.textures.straw,
+	inventory_image = cottages.textures.straw,
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",

@@ -149,19 +149,21 @@ function api.update_formspec(pos)
 		return
 	end
 
+	local parts = {anvil_formspec}
+
 	local owner = meta:get("owner")
 
-	if owner then
-		if owner == " " then
-			meta:set_string("formspec", ("%slabel[2.5,0.0;%s]"):format(anvil_formspec, FS("(Protected)")))
+	if not owner then
+		table.insert(parts, ("label[6,1;%s]"):format(FS("(Public)")))
 
-		else
-			meta:set_string("formspec", ("%slabel[2.5,0.0;%s]"):format(anvil_formspec, FS("Owner: @1", owner)))
-		end
+	elseif owner == " " then
+		table.insert(parts, ("label[6,1;%s]"):format(FS("(Protected)")))
 
 	else
-		meta:set_string("formspec", ("%slabel[2.5,0.0;%s]"):format(anvil_formspec, FS("(Public)")))
+		table.insert(parts, ("label[6,1;%s]"):format(FS("Owner: @1", owner)))
 	end
+
+	meta:set_string("formspec", table.concat(parts, ""))
 end
 
 local function sparks(pos)

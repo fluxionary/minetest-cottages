@@ -11,36 +11,52 @@ local settings = cottages.settings.water
 
 local api = cottages.water
 
-function api.update_well_formspec(pos)
+local formspec = ([[
+	size[8,9]
+	label[3.0,0.0;%s]
+	label[1.5,0.7;%s]
+	label[1.5,1.0;%s]
+	label[1.5,1.3;%s]
+	label[1.0,2.9;%s]
+	item_image[0.2,0.7;1.0,1.0;%s]
+	item_image[0.2,1.7;1.0,1.0;%s]
+	label[1.5,1.9;%s]
+	list[context;main;1,3.3;8,1;]
+	list[current_player;main;0,4.85;8,4;]
+	listring[]
+	button[6.0,0.0;2,0.5;public;%s]
+]]):format(
+	FS("Tree trunk well"),
+	FS("Punch the well while wielding an empty bucket."),
+	FS("Your bucket will slowly be filled with river water."),
+	FS("Punch again to get the bucket back when it is full."),
+	FS("Internal bucket storage (passive storage only):"),
+	F(ci.bucket),
+	F(ci.bucket_filled),
+	FS("Punch well with full water bucket in order to empty bucket."),
+	FS("Public?")
+)
+
+function api.update_formspec(pos)
+	local parts = {formspec}
+
 	local meta = minetest.get_meta(pos)
-	return meta:set_string("formspec", ([[
-		size[8,9]
-		label[3.0,0.0;%s]
-		label[1.5,0.7;%s]
-		label[1.5,1.0;%s]
-		label[1.5,1.3;%s]
-		label[1.0,2.9;%s]
-		item_image[0.2,0.7;1.0,1.0;%s]
-		item_image[0.2,1.7;1.0,1.0;%s]
-		label[1.5,1.9;%s]
-		list[context;main;1,3.3;8,1;]
-		list[current_player;main;0,4.85;8,4;]
-		listring[]
-		button[6.0,0.0;2,0.5;public;%s]
-	]]):format(
-		FS("Tree trunk well"),
-		FS("Punch the well while wielding an empty bucket."),
-		FS("Your bucket will slowly be filled with river water."),
-		FS("Punch again to get the bucket back when it is full."),
-		FS("Internal bucket storage (passive storage only):"),
-		F(ci.bucket),
-		F(ci.bucket_filled),
-		FS("Punch well with full water bucket in order to empty bucket."),
-		FS("Public?")
-	))
+	local owner = meta:get("owner")
+
+	if not owner then
+		table.insert(parts, ("label[6,1;%s]"):format(FS("(Public)")))
+
+	elseif owner == " " then
+		table.insert(parts, ("label[6,1;%s]"):format(FS("(Protected)")))
+
+	else
+		table.insert(parts, ("label[6,1;%s]"):format(FS("Owner: @1", owner)))
+	end
+
+	meta:set_string("formspec", table.concat(parts, ""))
 end
 
-function api.update_well_infotext(pos)
+function api.update_infotext(pos)
 	local meta = minetest.get_meta(pos)
 	local owner = meta:get("owner")
 	if owner then

@@ -47,15 +47,16 @@ minetest.register_node("cottages:water_gen", {
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		inv:set_size("main", 6)
-		api.update_well_formspec(pos)
-		api.update_well_infotext(pos)
+		api.update_formspec(pos)
+		api.update_infotext(pos)
 	end,
 
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", placer:get_player_name())
 		meta:set_string("bucket", "")
-		api.update_well_infotext(pos)
+		api.update_formspec(pos)
+		api.update_infotext(pos)
 	end,
 
 	can_dig = function(pos, player)
