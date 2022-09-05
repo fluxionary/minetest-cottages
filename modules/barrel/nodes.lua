@@ -32,8 +32,6 @@ minetest.register_node("cottages:barrel", {
 		local inv = meta:get_inventory()
 		inv:set_size("input", 1)
 		inv:set_size("output", 1)
-		api.update_infotext(pos)
-		api.update_formspec(pos)
 	end,
 
 	after_place_node = function(pos, placer)
@@ -163,7 +161,7 @@ minetest.register_node("cottages:tub", {
 		fixed = {
 			{-0.5, -0.5, -0.5, 0.5, -0.1, 0.5},
 		}},
-	collision_box = {
+		collision_box = {
 		type = "fixed",
 		fixed = {
 			{-0.5, -0.5, -0.5, 0.5, -0.1, 0.5},

@@ -47,21 +47,4 @@ function util.switch_public(pos, fields, sender, name_of_the_thing)
 	return true
 end
 
-function util.check_exists(item)
-	while minetest.registered_aliases[item] do
-		item = minetest.registered_aliases[item]
-	end
-
-	if minetest.registered_items[item] then
-		return item
-	end
-end
-
-function util.table_set_all(t, other_table)
-	for key, value in pairs(other_table) do
-		t[key] = value
-	end
-	return t
-end
-
 cottages.util = util

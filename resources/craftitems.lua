@@ -1,6 +1,6 @@
 local has = cottages.has
 
-local check_exists = cottages.util.check_exists
+local check_exists = futil.check_exists
 
 local ci = {}
 
