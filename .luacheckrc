@@ -39,6 +39,7 @@ stds.cottages = {
 	    "carts",
 		"default",
 		"doors",
+		"fs_layout",
 		"futil",
 		"node_entity_queue",
 		"player_monoids",

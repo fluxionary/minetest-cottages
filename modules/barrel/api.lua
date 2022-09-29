@@ -1,106 +1,10 @@
-local S = cottages.S
-local F = minetest.formspec_escape
-local FS = function(...) return F(S(...)) end
+--local S = cottages.S
+--local F = minetest.formspec_escape
+--local FS = function(...) return F(S(...)) end
 
 local max_liquid_amount = cottages.settings.barrel.max_liquid_amount
 
 local api = cottages.barrel
-
-local barrel_formspec = ([[
-	size[8,9]
-    label[0,0.0;%s]
-    label[0,3.0;%s]
-	label[3,0;%s]
-	list[context;input;3,0.5;1,1;]
-	label[5,3.3;%s]
-	list[context;output;5,3.8;1,1;]
-	list[current_player;main;0,5;8,4;]
-    listring[context;output]
-    listring[current_player;main]
-    listring[context;input]
-    listring[current_player;main]
-	button[6,0.0;1.5,0.5;public;%s]
-]]):format(
-	FS("Liquid Storage"),
-	FS("fill or empty with buckets"),
-	FS("Fill:"),
-	FS("Empty:"),
-	FS("Public?")
-)
-
-function api.update_formspec(pos)
-	local liquid = api.get_barrel_liquid(pos)
-	local liquid_amount = api.get_liquid_amount(pos)
-
-	local parts = {barrel_formspec}
-
-	if liquid then
-		local liquid_texture = api.texture_by_liquid[liquid]
-		table.insert(parts, ("image[2.6,2;2,3;%s^[lowpart:%s:%s]"):format(
-			cottages.textures.furniture,
-			100 * liquid_amount / max_liquid_amount,
-			liquid_texture
-		))
-		table.insert(parts, ("tooltip[2.6,2;2,3;%s]"):format(
-			F(("%s (%i/%i)"):format(
-				api.name_by_liquid[liquid],
-				api.get_liquid_amount(pos),
-				max_liquid_amount
-			)))
-		)
-
-	else
-		table.insert(parts, ("image[2.6,2;2,3;%s]"):format(
-			cottages.textures.furniture
-		))
-	end
-
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get("owner")
-
-	if not owner then
-		table.insert(parts, ("label[6,1;%s]"):format(FS("(Public)")))
-
-	elseif owner == " " then
-		table.insert(parts, ("label[6,1;%s]"):format(FS("(Protected)")))
-
-	else
-		table.insert(parts, ("label[6,1;%s]"):format(FS("Owner: @1", owner)))
-	end
-
-	meta:set_string("formspec", table.concat(parts, ""))
-end
-
-function api.update_infotext(pos)
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get("owner")
-
-	local parts = {}
-
-	if not owner then
-		table.insert(parts, S("Public barrel"))
-
-	elseif owner == " " then
-		table.insert(parts, S("Protected barrel"))
-
-	else
-		table.insert(parts, S("Private barrel (owned by @1)", owner))
-	end
-
-	local liquid = api.get_barrel_liquid(pos)
-	if liquid then
-		table.insert(parts, ("%s (%i/%i)"):format(
-			api.name_by_liquid[liquid],
-			api.get_liquid_amount(pos),
-			max_liquid_amount)
-		)
-
-	else
-		table.insert(parts, S("Empty"))
-	end
-
-	meta:set_string("infotext", table.concat(parts, "\n"))
-end
 
 function api.get_barrel_liquid(pos)
 	local meta = minetest.get_meta(pos)

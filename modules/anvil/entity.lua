@@ -1,4 +1,4 @@
-local api = cottages.anvil
+local anvil = cottages.anvil
 
 local deserialize = minetest.deserialize
 local serialize = minetest.serialize
@@ -25,7 +25,7 @@ minetest.register_entity("cottages:anvil_item", {
 
 		self.pos = pos  -- *MUST* set before calling api.get_entity
 
-		local other_obj = api.get_entity(pos)
+		local other_obj = anvil.get_entity(pos)
 		if other_obj and obj ~= other_obj then
 			obj:remove()
 			return
@@ -37,28 +37,21 @@ minetest.register_entity("cottages:anvil_item", {
 	end,
 })
 
-if cottages.settings.tool_entity_enabled then
-	local queue
-	if cottages.has.node_entity_queue then
-		queue = node_entity_queue.queue
-	end
-
+if cottages.settings.anvil.tool_entity_enabled then
 	-- automatically restore entities lost due to /clearobjects or similar
-	minetest.register_lbm({
-		name = "cottages:anvil_item_restoration",
-		nodenames = {"cottages:anvil"},
-		run_at_every_load = true,
-		action = function(pos, node, active_object_count, active_object_count_wider)
-			if queue then
-				queue:push_back(function()
-					api.add_entity(pos)
-				end)
+	if cottages.has.node_entity_queue then
+		node_entity_queue.api.register_node_entity_loader("cottages:anvil", anvil.update_entity)
 
-			else
-				api.add_entity(pos)
-			end
-		end
-	})
+	else
+		minetest.register_lbm({
+			name = "cottages:anvil_item_restoration",
+			nodenames = {"cottages:anvil"},
+			run_at_every_load = true,
+			action = function(pos, node, active_object_count, active_object_count_wider)
+				anvil.update_entity(pos)
+			end,
+		})
+	end
 
 else
 	minetest.register_lbm({
@@ -66,7 +59,7 @@ else
 		nodenames = {"cottages:anvil"},
 		run_at_every_load = true,
 		action = function(pos, node, active_object_count, active_object_count_wider)
-			api.clear_entity(pos)
-		end
+			anvil.clear_entity(pos)
+		end,
 	})
 end

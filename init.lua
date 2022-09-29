@@ -3,7 +3,7 @@ local modpath = minetest.get_modpath(modname)
 local S = minetest.get_translator(modname)
 
 cottages = {
-	version = os.time({year = 2022, month = 8, day = 19}),
+	version = os.time({year = 2022, month = 9, day = 29}),
 	fork = "fluxionary",
 
 	modname = modname,
@@ -22,7 +22,7 @@ cottages = {
 		player_monoids = minetest.get_modpath("player_monoids"),
 		stairs = minetest.get_modpath("stairs"),
 		stairsplus = minetest.get_modpath("stairsplus"),
-		stamina = minetest.get_modpath("stamina") and stamina.exhaust_player,
+		stamina = minetest.get_modpath("stamina") and minetest.global_exists("stamina") and stamina.exhaust_player,
 		technic = minetest.get_modpath("technic"),
 		unified_inventory = minetest.get_modpath("unified_inventory"),
 		wool = minetest.get_modpath("wool"),
@@ -41,4 +41,5 @@ cottages = {
 cottages.dofile("settings")
 cottages.dofile("util")
 cottages.dofile("resources", "init")
+cottages.dofile("api", "init")
 cottages.dofile("modules", "init")

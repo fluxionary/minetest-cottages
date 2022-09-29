@@ -4,7 +4,7 @@ local api = cottages.water
 local ci = cottages.craftitems
 
 local player_can_use = cottages.util.player_can_use
-local switch_public = cottages.util.switch_public
+local toggle_public = cottages.util.toggle_public
 
 minetest.register_node("cottages:water_gen", {
 	description = S("Tree Trunk Well"),
@@ -98,7 +98,7 @@ minetest.register_node("cottages:water_gen", {
 	end,
 
 	on_receive_fields = function(pos, formname, fields, sender)
-		if switch_public(pos, fields, sender, "well") then
+		if toggle_public(pos, fields, sender, "well") then
 			api.update_infotext(pos)
 			api.update_formspec(pos)
 		end
