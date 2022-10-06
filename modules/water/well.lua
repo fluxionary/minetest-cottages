@@ -1,12 +1,95 @@
+local F = minetest.formspec_escape
 local S = cottages.S
+local FS = function(...) return F(S(...)) end
+
+local s = cottages.sounds
 local t = cottages.textures
-local api = cottages.water
+local water = cottages.water
 local ci = cottages.craftitems
 
-local player_can_use = cottages.util.player_can_use
-local toggle_public = cottages.util.toggle_public
+local well_fill_time = cottages.settings.water.well_fill_time
 
-minetest.register_node("cottages:water_gen", {
+function water.get_well_fs_parts(pos)
+	return {
+		("size[8,9]"),
+		("label[3.0,0.0;%s]"):format(FS("Tree trunk well")),
+		("label[0,0.7;%s]"):format(FS("Punch the well while wielding an empty bucket.")),
+		("label[0,1.0;%s]"):format(FS("Your bucket will slowly be filled with river water.")),
+		("label[0,1.3;%s]"):format(FS("Punch again to get the bucket back when it is full.")),
+		("label[0,1.9;%s]"):format(FS("Punch well with full water bucket in order to empty bucket.")),
+		("label[1.0,2.9;%s]"):format(FS("Internal bucket storage (passive storage only):")),
+		("item_image[0,2.8;1.0,1.0;%s]"):format(F(ci.bucket)),
+		("item_image[0,3.8;1.0,1.0;%s]"):format(F(ci.bucket_filled)),
+		("list[context;main;1,3.3;8,1;]"),
+		("list[current_player;main;0,4.85;8,4;]"),
+		("listring[]"),
+	}
+end
+
+function water.get_well_info(pos)
+	return S("Tree trunk well")
+end
+
+function water.use_well(pos, puncher)
+	local player_name = puncher:get_player_name()
+	local meta = minetest.get_meta(pos)
+
+	local pinv = puncher:get_inventory()
+	local bucket = meta:get("bucket")
+
+	local entity_pos = vector.add(pos, vector.new(0, 1/4, 0))
+
+	if not bucket then
+		local wielded = puncher:get_wielded_item()
+		local wielded_name = wielded:get_name()
+		if wielded_name == ci.bucket then
+			meta:set_string("bucket", wielded_name)
+
+			minetest.add_entity(entity_pos, "cottages:bucket_entity")
+
+			pinv:remove_item("main", "bucket:bucket_empty")
+
+			local timer = minetest.get_node_timer(pos)
+			timer:start(well_fill_time)
+
+			water.add_filling_effects(pos)
+
+		elseif wielded_name == ci.bucket_filled then
+			-- empty a bucket
+			pinv:remove_item("main", ci.bucket_filled)
+			pinv:add_item("main", ci.bucket)
+
+			minetest.sound_play(
+				{name = s.water_empty},
+				{pos = entity_pos, gain = 0.5, pitch = 2.0},
+				true
+			)
+		end
+
+	elseif bucket == ci.bucket then
+		minetest.chat_send_player(player_name, S("Please wait until your bucket has been filled."))
+		local timer = minetest.get_node_timer(pos)
+		if not timer:is_started() then
+			timer:start(well_fill_time)
+			water.add_filling_effects(pos)
+		end
+
+	elseif bucket == ci.bucket_filled then
+		meta:set_string("bucket", "")
+
+		for _, obj in ipairs(minetest.get_objects_inside_radius(entity_pos, .1)) do
+			local ent = obj:get_luaentity()
+			if ent and ent.name == "cottages:bucket_entity" then
+				obj:remove()
+			end
+		end
+
+		pinv:add_item("main", ci.bucket_filled)
+	end
+end
+
+
+cottages.api.register_machine("cottages:water_gen", {
 	description = S("Tree Trunk Well"),
 	tiles = {t.tree_top, ("%s^[transformR90"):format(t.tree), ("%s^[transformR90"):format(t.tree)},
 	drawtype = "nodebox",
@@ -16,6 +99,10 @@ minetest.register_node("cottages:water_gen", {
 	is_ground_content = false,
 	groups = {choppy = 2, cracky = 1, flammable = 2},
 	sounds = cottages.sounds.wood,
+
+	inv_info = {
+		main = 6,
+	},
 
 	node_box = {
 		type = "fixed",
@@ -43,30 +130,13 @@ minetest.register_node("cottages:water_gen", {
 		fixed = {-0.5, -0.5, -0.5, 0.5, 0.5 + (4 / 16), 0.5}
 	},
 
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		inv:set_size("main", 6)
-		api.update_formspec(pos)
-		api.update_infotext(pos)
-	end,
 
-	after_place_node = function(pos, placer)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("owner", placer:get_player_name())
-		meta:set_string("bucket", "")
-		api.update_formspec(pos)
-		api.update_infotext(pos)
-	end,
+	get_fs_parts = water.get_well_fs_parts,
+	get_info = water.get_well_info,
 
 	can_dig = function(pos, player)
 		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		return (
-			inv:is_empty("main") and
-			player_can_use(pos, player) and
-			not meta:get("bucket")
-		)
+		return not meta:get("bucket")
 	end,
 
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
@@ -74,10 +144,6 @@ minetest.register_node("cottages:water_gen", {
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if not player_can_use(pos, player) then
-			return 0
-		end
-
 		local sname = stack:get_name()
 		if sname ~= ci.bucket and sname ~= ci.bucket_filled then
 			return 0
@@ -87,30 +153,14 @@ minetest.register_node("cottages:water_gen", {
 	end,
 
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if not player_can_use(pos, player) then
-			return 0
-		end
-
 		return stack:get_count()
 	end,
 
-	on_blast = function()
-	end,
-
-	on_receive_fields = function(pos, formname, fields, sender)
-		if toggle_public(pos, fields, sender, "well") then
-			api.update_infotext(pos)
-			api.update_formspec(pos)
-		end
-	end,
-
 	on_timer = function(pos, elapsed)
-		api.fill_bucket(pos)
+		water.fill_bucket(pos)
 	end,
 
-	on_punch = function(pos, node, puncher, pointed_thing)
-		api.use_well(pos, puncher)
-	end,
+	use = water.use_well,
 })
 
 minetest.register_lbm({
@@ -119,6 +169,6 @@ minetest.register_lbm({
 	nodenames = {"cottages:water_gen"},
 	run_at_every_load = true,
 	action = function(pos, node)
-		api.initialize_entity(pos)
+		water.initialize_entity(pos)
 	end
 })

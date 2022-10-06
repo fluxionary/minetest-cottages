@@ -88,17 +88,3 @@ cottages.settings = {
 		well_fill_time = tonumber(s:get("cotages.water.well_fill_time")) or 10
 	},
 }
-
--- supported modes:
--- * simple: only a straight dirt road; no curves, junctions etc.
--- * flat: each node is a full node; junction, t-junction and corner are included
--- * nodebox: like flat - except that each node has a nodebox that fits to that road node
--- * mesh: like nodebox - except that it uses a nice roundish model
-if cottages.settings.feldweg.mode ~= "simple" and
-	cottages.settings.feldweg.mode ~= "flat" and
-	cottages.settings.feldweg.mode ~= "nodebox" then
-
-	cottages.settings.feldweg.mode = "mesh"
-	-- add the setting to the minetest.conf so that the player can set it there
-	minetest.settings:set("cottages.feldweg.mode", "mesh")
-end

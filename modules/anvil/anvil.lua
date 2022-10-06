@@ -43,7 +43,7 @@ function anvil.get_anvil_info(pos)
 		return S("anvil")
 
 	elseif input:get_wear() > 0 then
-		return S("anvil; repairing @1 (@2%)", get_safe_short_description(input, wear))
+		return S("anvil; repairing @1 (@2%)", get_safe_short_description(input), wear)
 
 	else
 		return S("anvil; @1 is repaired", get_safe_short_description(input))

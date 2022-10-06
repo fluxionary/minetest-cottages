@@ -1,10 +1,16 @@
---local S = cottages.S
---local F = minetest.formspec_escape
---local FS = function(...) return F(S(...)) end
-
 local max_liquid_amount = cottages.settings.barrel.max_liquid_amount
 
 local api = cottages.barrel
+
+api.bucket_empty_by_bucket_full = {}
+api.bucket_full_by_empty_and_liquid = {}
+api.liquid_by_bucket_full = {}
+
+api.name_by_liquid = {}
+api.texture_by_liquid = {}
+
+api.input_sound_by_liquid = {}
+api.output_sound_by_liquid = {}
 
 function api.get_barrel_liquid(pos)
 	local meta = minetest.get_meta(pos)
@@ -34,14 +40,6 @@ function api.decrease_liquid_amount(pos)
 		api.set_barrel_liquid(pos, "")
 	end
 end
-
-api.bucket_empty_by_bucket_full = {}
-api.liquid_by_bucket_full = {}
-api.bucket_full_by_empty_and_liquid = {}
-api.name_by_liquid = {}
-api.texture_by_liquid = {}
-api.input_sound_by_liquid = {}
-api.output_sound_by_liquid = {}
 
 local function empty_and_liquid(bucket_empty, liquid)
 	return table.concat({bucket_empty, liquid}, "::")

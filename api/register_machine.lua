@@ -169,31 +169,37 @@ function cottages.api.register_machine(name, def)
 		on_metadata_inventory_put = function(pos, listname, index, stack, player)
 			local meta = minetest.get_meta(pos)
 			meta:set_int("used", 0)
-			if update_infotext then update_infotext(pos) end
 
 			if def.on_metadata_inventory_put then
 				def.on_metadata_inventory_put(pos, listname, index, stack, player)
 			end
+
+			if update_infotext then update_infotext(pos) end
+			if update_formspec then update_formspec(pos) end
 		end,
 
 		on_metadata_inventory_take = function(pos, listname, index, stack, player)
 			local meta = minetest.get_meta(pos)
 			meta:set_int("used", 0)
-			if update_infotext then update_infotext(pos) end
 
 			if def.on_metadata_inventory_take then
 				def.on_metadata_inventory_take(pos, listname, index, stack, player)
 			end
+
+			if update_infotext then update_infotext(pos) end
+			if update_formspec then update_formspec(pos) end
 		end,
 
 		on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 			local meta = minetest.get_meta(pos)
 			meta:set_int("used", 0)
-			if update_infotext then update_infotext(pos) end
 
 			if def.on_metadata_inventory_move then
 				def.on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
 			end
+
+			if update_infotext then update_infotext(pos) end
+			if update_formspec then update_formspec(pos) end
 		end,
 
 		on_punch = function(pos, node, puncher, pointed_thing)
@@ -205,6 +211,7 @@ function cottages.api.register_machine(name, def)
 				local meta = minetest.get_meta(pos)
 				meta:set_int("used", 1)
 				if update_infotext then update_infotext(pos) end
+				if update_formspec then update_formspec(pos) end
 			end
 		end,
 
@@ -219,9 +226,15 @@ function cottages.api.register_machine(name, def)
 				local meta = minetest.get_meta(pos)
 				meta:set_int("used", 1)
 				if update_infotext then update_infotext(pos) end
+				if update_formspec then update_formspec(pos) end
 			end
 
 			return rv
+		end,
+
+		on_timer = def.on_timer,
+
+		on_blast = function()
 		end,
 	})
 
