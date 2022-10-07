@@ -3,28 +3,31 @@ local F = minetest.formspec_escape
 local FS = function(...) return F(S(...)) end
 local anvil = cottages.anvil
 
-local get_safe_short_description = futil.get_safe_short_description
-local resolve_item = futil.resolve_item
-
-local repair_amount = cottages.settings.anvil.repair_amount
-local hammer_wear = cottages.settings.anvil.hammer_wear
-local formspec_enabled = cottages.settings.anvil.formspec_enabled
-local tool_hud_enabled = cottages.settings.anvil.tool_hud_enabled
-local hud_timeout = cottages.settings.anvil.hud_timeout
-local tool_entity_enabled = cottages.settings.anvil.tool_entity_enabled
-local tool_entity_displacement = cottages.settings.anvil.tool_entity_displacement
-
-local hud_info_by_puncher_name = {}
+local add_entity = minetest.add_entity
+local get_node = minetest.get_node
+local get_objects_in_area = minetest.get_objects_in_area
+local serialize = minetest.serialize
 
 local v_add = vector.add
 local v_eq = vector.equals
 local v_new = vector.new
 local v_sub = vector.subtract
 
-local add_entity = minetest.add_entity
-local get_node = minetest.get_node
-local get_objects_in_area = minetest.get_objects_in_area
-local serialize = minetest.serialize
+local get_safe_short_description = futil.get_safe_short_description
+local resolve_item = futil.resolve_item
+
+local has_stamina = cottages.has.stamina
+
+local repair_amount = cottages.settings.anvil.repair_amount
+local hammer_wear = cottages.settings.anvil.hammer_wear
+local formspec_enabled = cottages.settings.anvil.formspec_enabled
+local tool_hud_enabled = cottages.settings.anvil.tool_hud_enabled
+local hud_timeout = cottages.settings.anvil.hud_timeout
+local stamina_use = cottages.settings.anvil.stamina
+local tool_entity_enabled = cottages.settings.anvil.tool_entity_enabled
+local tool_entity_displacement = cottages.settings.anvil.tool_entity_displacement
+
+local hud_info_by_puncher_name = {}
 
 local function get_hud_image(tool)
 	local tool_def = tool:get_definition()
@@ -194,6 +197,10 @@ function anvil.use_anvil(pos, puncher)
 		puncher:set_wielded_item(wielded)
 
 		update_hud(puncher, tool)
+
+		if has_stamina then
+			stamina.exhaust_player(puncher, stamina_use, "cottages:anvil")
+		end
 
 	else
 		-- tell the player when the job is done, but only once

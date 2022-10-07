@@ -16,7 +16,7 @@ function cottages.api.register_machine(name, def)
 
 	if def.get_fs_parts then
 		function update_formspec(pos)
-			-- TODO instead create "public button formspec" api call, to generate this. works better w/ fs_layout
+			-- TODO.md instead create "public button formspec" api call, to generate this. works better w/ fs_layout
 			local fs_parts = def.get_fs_parts(pos)
 
 			table.insert(fs_parts, ("button[6.0,1.5;1.5,0.5;public;%s]"):format(FS("public?")))

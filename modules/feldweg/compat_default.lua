@@ -1,0 +1,5 @@
+cottages.feldweg.register_feldweg("default:dirt_with_grass")
+cottages.feldweg.register_feldweg("default:gravel")
+cottages.feldweg.register_feldweg("default:dirt_with_coniferous_litter")
+cottages.feldweg.register_feldweg("default:dirt_with_snow")
+cottages.feldweg.register_feldweg("default:dry_dirt")

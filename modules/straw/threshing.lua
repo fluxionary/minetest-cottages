@@ -6,6 +6,8 @@ local FS = function(...) return F(S(...)) end
 
 local get_safe_short_description = futil.get_safe_short_description
 
+local has_stamina = cottages.has.stamina
+local stamina_use = cottages.settings.straw.threshing_stamina
 local threshing_min_per_punch = cottages.settings.straw.threshing_min_per_punch
 local threshing_max_per_punch = cottages.settings.straw.threshing_max_per_punch
 
@@ -88,9 +90,9 @@ local function get_threshing_results(input)
 	end
 end
 
-function straw.use_threshing(pos, puncher)
+function straw.use_threshing(pos, player)
 	-- only punching with a normal stick is supposed to work
-	local wielded = puncher:get_wielded_item()
+	local wielded = player:get_wielded_item()
 	if minetest.get_item_group(wielded:get_name(), "stick") == 0 then
 		return
 	end
@@ -171,6 +173,10 @@ function straw.use_threshing(pos, puncher)
 		{pos = particle_pos, gain = 1, pitch = 0.5},
 		true
 	)
+
+	if has_stamina then
+		stamina.exhaust_player(player, stamina_use, "cottages:quern")
+	end
 
 	return true
 end

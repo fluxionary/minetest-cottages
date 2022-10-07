@@ -1,6 +1,6 @@
 Contains nodes for building medieval houses.
 
-Liscence of this mod: GPLv3 Autor: Sokomine
+Liscence of this mod: GPLv3 Author: Sokomine, fluxionary
 
 ---
 --- Textures and media:
@@ -20,11 +20,11 @@ https://github.com/minetest/minetest_game
 and renamed (default_NAME.png -> cottages_NAME.png)
 
 Cisoun's WTFPL texture pack:
-cottages_stone.png (for anvil and handmill)
+cottages_stone.png (for handmill)
 cottages_wool.png
 
 Zeg9 (CC BY-SA 3.0):
-cottages_steel_block.png (for steel hatch and stovepipie)
+cottages_steel_block.png (for anvil and steel hatch and stovepipie)
 
 MasterGollum (WTFPL, darkage mod):
 cottages_darkage_straw_bale.png cottages_darkage_straw.png cottages_reet.png (straw texture changed in color)

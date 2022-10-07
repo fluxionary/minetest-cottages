@@ -1,5 +1,8 @@
 local S = cottages.S
 
+local has_stamina = cottages.has.stamina
+local stamina_use = cottages.settings.pitchfork.stamina
+
 minetest.register_node("cottages:pitchfork", {
 	description = S("Pitchfork (dig dirt with grass to get hay, place with right-click)"),
 	short_description = S("Pitchfork"),
@@ -63,29 +66,36 @@ local function override_on_dig(node_name, replacement)
 
 	minetest.override_item(node_name, {
 		on_dig = function(pos, node, digger)
-			if minetest.is_player(digger) then
-				local digger_name = digger:get_player_name()
-				if minetest.is_protected(pos, digger_name) then
-					minetest.record_protection_violation(pos, digger_name)
-					return false
-				end
-
-				local wielded = digger:get_wielded_item()
-
-				if wielded:get_name() == "cottages:pitchfork" then
-					local pos_above = vector.add(pos, {x=0, y=1, z=0})
-					local node_above = minetest.get_node(pos_above)
-
-					if not minetest.is_protected(pos_above, digger_name) and node_above.name == "air" then
-						minetest.swap_node(pos, {name = replacement})
-						minetest.swap_node(pos_above, {name = "cottages:hay_mat", param2 = math.random(2, 25)})
-
-						return true
-					end
-				end
+			if not minetest.is_player(digger) then
+				return old_on_dig(pos, node, digger)
 			end
 
-			return old_on_dig(pos, node, digger)
+			local wielded = digger:get_wielded_item()
+
+			if wielded:get_name() ~= "cottages:pitchfork" then
+				return old_on_dig(pos, node, digger)
+			end
+
+			local digger_name = digger:get_player_name()
+			if minetest.is_protected(pos, digger_name) then
+				return old_on_dig(pos, node, digger)
+			end
+
+			local pos_above = vector.add(pos, {x=0, y=1, z=0})
+			local node_above = minetest.get_node(pos_above)
+
+			if minetest.is_protected(pos_above, digger_name) or node_above.name ~= "air" then
+				return old_on_dig(pos, node, digger)
+			end
+
+			minetest.swap_node(pos, {name = replacement})
+			minetest.swap_node(pos_above, {name = "cottages:hay_mat", param2 = math.random(2, 25)})
+
+			if has_stamina then
+				stamina.exhaust_player(digger, stamina_use, "cottages:pitchfork")
+			end
+
+			return true
 		end,
 	})
 end

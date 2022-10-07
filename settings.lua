@@ -35,8 +35,6 @@ cottages.settings = {
 
 	fences = {
 		enabled = s:get_bool("cottages.fences.enabled", true),
-
-		stamina = tonumber(s:get("cottages.anvil.stamina")) or 1,
 	},
 
 	furniture = {
@@ -45,8 +43,6 @@ cottages.settings = {
 
 	hay = {
 		enabled = s:get_bool("cottages.hay.enabled", true),
-
-		pitchfork_stamina = tonumber(s:get("cottages.anvil.stamina")) or 3,
 	},
 
 	historic = {
@@ -59,6 +55,8 @@ cottages.settings = {
 
 	pitchfork = {
 		enabled = s:get_bool("cottages.pitchfork.enabled", true),
+
+		stamina = tonumber(s:get("cottages.pitchfork.stamina")) or 10,
 	},
 
 	roof = {
@@ -79,7 +77,7 @@ cottages.settings = {
 
 		threshing_min_per_punch = tonumber(s:get("cottages.straw.threshing_min_per_punch")) or 5,
 		threshing_max_per_punch = tonumber(s:get("cottages.straw.threshing_max_per_punch")) or 10,
-		threshing_stamina = tonumber(s:get("cottages.straw.threshing_stamina")) or 10,
+		threshing_stamina = tonumber(s:get("cottages.straw.threshing_stamina")) or 20,
 	},
 
 	water = {

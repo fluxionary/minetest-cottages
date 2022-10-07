@@ -23,7 +23,7 @@ minetest.register_node("cottages:window_shutter_open", {
 		},
 	},
 	on_rightclick = function(pos, node, puncher)
-		cottages.doorlike.shutter_close(pos)
+		cottages.doorlike.shutter_close(pos, puncher)
 	end,
 	is_ground_content = false,
 })
@@ -49,7 +49,7 @@ minetest.register_node("cottages:window_shutter_closed", {
 		},
 	},
 	on_rightclick = function(pos, node, puncher)
-		cottages.doorlike.shutter_open(pos)
+		cottages.doorlike.shutter_open(pos, puncher)
 	end,
 	is_ground_content = false,
 	drop = "cottages:window_shutter_open",

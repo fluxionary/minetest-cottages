@@ -6,6 +6,8 @@ local FS = function(...) return F(S(...)) end
 
 local get_safe_short_description = futil.get_safe_short_description
 
+local has_stamina = cottages.has.stamina
+local stamina_use = cottages.settings.straw.quern_stamina
 local quern_min_per_turn = cottages.settings.straw.quern_min_per_turn
 local quern_max_per_turn = cottages.settings.straw.quern_max_per_turn
 
@@ -78,7 +80,7 @@ local function get_quern_results(input)
 	end
 end
 
-function straw.use_quern(pos)
+function straw.use_quern(pos, player)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local input = inv:get_stack("seeds", 1)
@@ -130,6 +132,10 @@ function straw.use_quern(pos)
 		{pos = pos, gain = 1, pitch = 0.25},
 		true
 	)
+
+	if has_stamina then
+		stamina.exhaust_player(player, stamina_use, "cottages:quern")
+	end
 
 	return true
 end
