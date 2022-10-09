@@ -25,13 +25,30 @@
 
 # feldweg
 
-* `api.register_feldweg(node, def)`
+* `api.register_feldweg(node, suffix)`
+  register feldweg variants of a node
 
 # roof
 
 * `cottages.roof.register_roof(name, material, tiles)`
+  register roof variants of a node
 
 # straw
 
 * `api.register_quern_craft(recipe)`
+  register a crafting recipe w/ the quern. recipe is like
+  ```lua
+  {
+      input = "farming:seed_barley",
+      output = "farming:flour",
+  }
+  ```
+
 * `api.register_threshing_craft(recipe)`
+  register a crafting recipe w/ the threshing floor. recipe is like
+  ```lua
+  {
+      input = "farming:barley",
+      output = {"farming:seed_barley", "cottages:straw_mat"},
+  }
+  ```

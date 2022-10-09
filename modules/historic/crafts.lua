@@ -11,17 +11,6 @@ if ci.iron and ci.stick and ci.steel then
 	})
 end
 
-if ci.dirt then
-	minetest.register_craft({
-		output = "cottages:feldweg 4",
-		recipe = {
-			{"", "cottages:wagon_wheel", ""},
-			{ci.dirt, ci.dirt, ci.dirt}
-		},
-		replacements = {{"cottages:wagon_wheel", "cottages:wagon_wheel"}, }
-	})
-end
-
 if ci.sand and ci.clay then
 	minetest.register_craft({
 		output = "cottages:loam 4",

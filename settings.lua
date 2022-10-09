@@ -12,7 +12,7 @@ cottages.settings = {
 		formspec_enabled = s:get_bool("cottages.anvil.formspec_enabled", true),
 		tool_hud_enabled = s:get_bool("cottages.anvil.tool_hud_enabled", true),
 		tool_entity_enabled = s:get_bool("cottages.anvil.tool_entity_enabled", false),
-		tool_entity_displacement = tonumber(s:get("anvil.tool_entity_displacement")) or 2 / 16,
+		tool_entity_displacement = tonumber(s:get("cottages.anvil.tool_entity_displacement")) or 2 / 16,
 	},
 
 	barrel = {
@@ -24,13 +24,11 @@ cottages.settings = {
 	doorlike = {
 		enabled = s:get_bool("cottages.doorlike.enabled", true),
 
-		stamina = tonumber(s:get("cottages.anvil.stamina")) or 1,
+		stamina = tonumber(s:get("cottages.doorlike.stamina")) or 1,
 	},
 
 	feldweg = {
 		enabled = s:get_bool("cottages.feldweg.enabled", true),
-
-		mode = s:get("cottages.feldweg.mode") or "mesh"
 	},
 
 	fences = {
@@ -72,7 +70,7 @@ cottages.settings = {
 		enabled = s:get_bool("cottages.straw.enabled", true),
 
 		quern_min_per_turn = tonumber(s:get("cottages.straw.quern_min_per_turn")) or 2,
-		quern_max_per_turn = tonumber(s:get("cottages.straw.quern_min_per_turn")) or 5,
+		quern_max_per_turn = tonumber(s:get("cottages.straw.quern_max_per_turn")) or 5,
 		quern_stamina = tonumber(s:get("cottages.straw.quern_stamina")) or 20,
 
 		threshing_min_per_punch = tonumber(s:get("cottages.straw.threshing_min_per_punch")) or 5,
@@ -83,6 +81,6 @@ cottages.settings = {
 	water = {
 		enabled = s:get_bool("cottages.water.enabled", true),
 
-		well_fill_time = tonumber(s:get("cotages.water.well_fill_time")) or 10
+		well_fill_time = tonumber(s:get("cottages.water.well_fill_time")) or 10
 	},
 }

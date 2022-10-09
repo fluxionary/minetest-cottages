@@ -15,6 +15,7 @@ cottages = {
 		default = minetest.get_modpath("default"),
 		doors = minetest.get_modpath("doors"),
 		env_sounds = minetest.get_modpath("env_sounds"),
+		ethereal = minetest.get_modpath("ethereal"),
 		farming = minetest.get_modpath("farming"),
 		moreblocks = minetest.get_modpath("moreblocks"),
 		node_entity_queue = minetest.get_modpath("node_entity_queue"),

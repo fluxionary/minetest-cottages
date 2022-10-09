@@ -13,6 +13,7 @@ optional_depends:
 * [x] node_entity_queue intergration
 
 * [x] anvil: option for using formspec-less interface
-* [ ] feldweg registration API https://gitea.your-land.de/Sokomine/cottages/src/branch/master/nodes_feldweg.lua
+* [x] feldweg registration API https://gitea.your-land.de/Sokomine/cottages/src/branch/master/nodes_feldweg.lua
+* [x] settingtypes.txt
 
-* [ ] document API
+* [ ] API.md
